@@ -1,0 +1,39 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}会员订阅{% endblock %}
+
+{% block main %}
+<div class="row justify-content-center mb-5 mt-5">
+  <div class="col-sm-6">
+    <div class="card">
+      <div class="card-header">成为FT会员</div>
+      <div class="list-group list-group-flush">
+        <li class="list-group-item d-flex justify-content-between"><span>会员类型:</span><span>{{tier}}/{{cycle}}</span></li>
+        <li class="list-group-item d-flex justify-content-between"><span>支付金额:</span><span>{{price}}</span></li>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row justify-content-center mb-5">
+  <div class="col-sm-6">
+    <div class="card">
+      <div class="card-header">选择支付方式</div>
+      <div class="card-body">
+        <form action="" method="post">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="paymentMethod" id="payByAli" value="alipay">
+            <label class="form-check-label" for="payByAli">支付宝</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="paymentMethod" id="payByWx" value="tenpay">
+            <label class="form-check-label" for="payByWx">微信支付</label>
+          </div>
+      
+          <button type="submit" class="btn btn-primary">确认</button>
+        </form>
+      </div> 
+    </div>
+  </div>
+</div>
+
