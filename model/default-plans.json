@@ -1,0 +1,17 @@
+{
+  "standard_year": {
+    "tier": "standard",
+    "cycle": "year",
+    "price": 198.00
+  },
+  "standard_month": {
+    "tier": "standard",
+    "cycle": "month",
+    "price": 28.00
+  } ,
+  "premium_year": {
+    "tier": "premium",
+    "cycle": "year",
+    "price": 1998.00
+  }
+}
