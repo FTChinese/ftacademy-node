@@ -95,11 +95,51 @@ a:hover {
     color: #33302e;
     border-bottom: 1px solid #ccc1b7;
 }
+.barrier-banner {
+  background-color: #f2e0d0;
+}
+.barrier-banner .container {
+  padding-bottom: 20px;
+  padding-top: 20px;
+}
+.barrier-cover {
+  width: 100%;
+  object-fit: contain;
+}
+.barrier-heading {
+  font-size: 32px;
+  line-height: 32px;
+  font-weight: 600;
+  opacity: 0.5;
+}
 
+.o-card-group .card {
+  height: 100%;
+}
+.o-card-group .card-title {
+  border-bottom: 1px solid #26747a;
+}
+.o-card-group .card ul {
+  padding-left: 0;
+}
+.o-card-group .card li {
+  list-style-position: outside;
+  list-style-type: none;
+  padding-left: 1.5em;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  background-size: 1.5em;
+  background-image: url(https://www.ft.com/__origami/service/image/v2/images/raw/fticon-v1:tick?tint=26747a&format=svg&source=ftchinese);
+  background-repeat: no-repeat;
+  background-position: left top;
+}
+.o-card-group .card-footer {
+  background-color:transparent;
+  border-top: 0;
+}
 .navbar-brand, .dropdown-toggle {
     color: #33302e;
 }
-
 .navbar-brand:hover, .dropdown-toggle:hover {
     color: #4D4845;
 }
