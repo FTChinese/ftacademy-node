@@ -7,6 +7,8 @@ const session = require("koa-session");
 
 const boot = require("./util/boot-app");
 
+const env = require("./middleware/env");
+
 const home = require("./server/home");
 const subscription = require("./server/subscription");
 const version = require("./server/version");
@@ -24,6 +26,7 @@ if (!isProduction) {
 }
 
 app.use(bodyParser());
+app.use(env());
 
 router.get("/", home)
 router.use("/subscription", subscription);
