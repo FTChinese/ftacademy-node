@@ -22,26 +22,14 @@
   
 </head>
 <body>
-  <header class="navbar navbar-expand o-header">
-    <div class="container">
-      <a class="navbar-brand" href="/">FT中文网·会员订阅</a>
-      {% block headerNav %}{% endblock %}
+  <header class="navbar o-header">
+    <div class="container justify-content-center">
+      <span class="navbar-brand">FT中文网 - 会员订阅</span>
     </div>
   </header>
 
-  <main class="page-content" role="main">
-    <div class="container">
-      {% if errors.server %}
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-          <span>{{errors.server.message}}</span>
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-      {% endif %}
-
+  <main id="site-content" role="main">
       {% block main %}{% endblock %}
-    </div>
   </main>
 
   <footer class="o-footer o-footer--theme-dark">
@@ -72,7 +60,7 @@
 
       <div class="o-footer__copyright">
         <small>
-          © FT中文网 2017.
+          © FT中文网 {{env.year}}.
           <abbr title="Financial Times" aria-label="F T">FT</abbr> and ‘Financial Times’ are trademarks of The Financial Times Ltd.
         </small>
       </div>
@@ -80,9 +68,9 @@
   </footer>
 
   {% if env.isProduction %}
-  <script src="https://cdn.bootcss.com/bootstrap.native/2.0.21/bootstrap-native-v4.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap.native/2.0.23/bootstrap-native-v4.min.js"></script>
   {% else %}
-  <script src="/dist/bootstrap-native-v4.js"></script>
+  <script src="/bootstrap.native/dist/bootstrap-native-v4.js"></script>
   {% endif %}
 </body>
 </html>
