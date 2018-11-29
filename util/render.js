@@ -1,7 +1,8 @@
 const path = require("path");
 const nunjucks = require("nunjucks");
 const util = require("util");
-const numeral = require("numeral")
+const numeral = require("numeral");
+const localized = require("../model/localized.json");
 
 const env = nunjucks.configure(
   [
@@ -19,6 +20,14 @@ const env = nunjucks.configure(
  */
 env.addFilter("toCurrency", function(num) {
   return numeral(num).format("0,0.00");
+});
+
+env.addFilter("localize", function(key) {
+  if (localized.hasOwnProperty(key)) {
+    return localized[key];
+  }
+
+  return key;
 });
 
 module.exports = util.promisify(nunjucks.render);

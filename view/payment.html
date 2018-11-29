@@ -9,8 +9,15 @@
       <div class="card">
         <div class="card-header">您选择订阅FT会员</div>
         <div class="list-group list-group-flush">
-          <li class="list-group-item d-flex justify-content-between"><span>会员类型:</span><span>{{ plan.tier }}/{{ plan.cycle }}</span></li>
-          <li class="list-group-item d-flex justify-content-between"><span>支付金额:</span><span>¥{{ plan.charge | toCurrency }}</span></li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span>会员类型:</span>
+            <span>{{ plan.tier | localize }}/{{ plan.cycle | localize }}</span>
+          </li>
+
+          <li class="list-group-item d-flex justify-content-between">
+            <span>支付金额:</span>
+            <span>¥{{ plan.price | toCurrency }}</span>
+          </li>
         </div>
       </div>
     </div>

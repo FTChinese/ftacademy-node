@@ -4,7 +4,7 @@ const endpoints = require("../util/endpoints");
 const render = require("../util/render");
 
 const defaultPlans = require("../model/default-plans.json");
-const defaultBarrier = require("../model/default-barrier.json");
+const defaultBanner = require("../model/default-banner.json");
 const deafultProducts = require("../model/default-products.json");
 const promotion = require("../model/promotion.json");
 const localized = require("../model/localized.json");
@@ -18,7 +18,7 @@ router.get("/", async (ctx, next) => {
 
   const promoPlans = promotion.plans;
 
-  ctx.state.barrier = defaultBarrier;
+  ctx.state.banner = defaultBanner;
   ctx.state.products = deafultProducts.map(product => {
     const tier = product.tier;
     /**
@@ -54,8 +54,6 @@ router.get("/", async (ctx, next) => {
     }
     return Object.assign({prices}, product);
   });
-
-  ctx.state.localized = localized;
   
   console.log(ctx.state);
 
@@ -77,36 +75,13 @@ router.get("/:tier/:cycle", async (ctx, next) => {
     return;
   }
 
-  try {
-    const resp = await request.get(`${endpoints.plans}`);
+  /**
+   * @type {{tier: string, cycle: string, price: number}}
+   */
+  ctx.state.plan = defaultPlans[key];
 
-    const plans = resp.body;
+  ctx.body = await render("payment.html", ctx.state);
 
-    /**
-     * @type {{tier: string, cycle: string, price: number}}
-     */
-    const plan = plans[key];
-    ctx.state.plan = {
-      tier: localized[plan.tier],
-      cycle: localized[plan.cycle],
-      charge: plan.price,
-    };
-  
-    ctx.body = await render("payment.html", ctx.state);
-  } catch (e) {
-    console.error(e);
-    /**
-     * @type {{tier: string, cycle: string, price: number}}
-     */
-    const plan = defaultPlans[key];
-    ctx.state.plan = {
-      tier: localized[plan.tier],
-      cycle: localized[plan.cycle],
-      charge: plan.price,
-    };
-
-    ctx.body = await render("payment.html", ctx.state);
-  }
 });
 
 router.post("/:tier/:cycle", async (ctx, next) => {

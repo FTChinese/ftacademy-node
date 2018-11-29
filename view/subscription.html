@@ -7,15 +7,15 @@
   <div class="container pt-3 pb-3">
     <div class="row flex-row-reverse">
       <div class="col-sm-4">
-        <img class="barrier-cover" src="{{barrier.coverUrl}}" alt="">
+        <img class="barrier-cover" src="{{banner.coverUrl}}" alt="">
       </div>
       <div class="col-sm-8">
         <div class="pt-3 pb-3">
-          <h1 class="barrier-heading">{{barrier.heading}}</h1>
-          <h2 class="barrier-heading">{{barrier.subHeading}}</h2>
+          <h1 class="barrier-heading">{{banner.heading}}</h1>
+          <h2 class="barrier-heading">{{banner.subHeading}}</h2>
         </div>
         <div class="barrier-content">
-          {% for p in barrier.content %}
+          {% for p in banner.content %}
           <p>{{p}}</p>
           {% endfor %}
         </div>
@@ -56,10 +56,10 @@
               class="btn btn-primary text-white"
               {% endif %}>
                 {% if price.promo %}
-                <s>¥{{ price.origin | toCurrency }}/{{ localized[cycle] }}</s> 
-                ¥{{ price.promo | toCurrency }}/{{ localized[cycle] }}
+                  <s>¥{{ price.origin | toCurrency }}/{{ cycle | localize }}</s> 
+                  ¥{{ price.promo | toCurrency }}/{{ cycle | localize }}
                 {% else %}
-                ¥{{ price.origin | toCurrency }}/{{ localized[cycle] }}
+                  ¥{{ price.origin | toCurrency }}/{{ cycle | localize }}
                 {% endif %}
               </a>
             </div>
