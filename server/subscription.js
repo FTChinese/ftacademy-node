@@ -7,7 +7,6 @@ const defaultPlans = require("../model/default-plans.json");
 const defaultBanner = require("../model/default-banner.json");
 const deafultProducts = require("../model/default-products.json");
 const promotion = require("../model/promotion.json");
-const localized = require("../model/localized.json");
 
 const router = new Router();
 
