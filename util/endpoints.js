@@ -1,7 +1,7 @@
 const baseUrl = "http://localhost:8200";
 
 module.exports = {
-  "wxOrder": `${baseUrl}/unified-order`,
-  "aliOrder": `${baseUrl}/app-order`,
+  "wxpay": `${baseUrl}/wxpay/unified-order`,
+  "alipay": `${baseUrl}/alipay/app-order`,
   "plans": `${baseUrl}/paywall/plans`,
 };

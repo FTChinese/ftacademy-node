@@ -1,0 +1,21 @@
+{% extends "layout/base.html" %}
+
+{% block main %}
+<div class="container">
+  <div class="jumbotron">
+    {% if apiError %}
+      <h1>API Error {{status}}</h1>
+      <pre><code>{{apiError}}</code></pre>
+    {% endif %}
+
+    {% if error %}
+      <h1>Error {{status}}</h1>
+      <p><code>{{error.message}}</code></p>
+      {% if not env.isProduction %}
+        <pre><code>{{error.stack}}</code></pre>
+      {% endif %}
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

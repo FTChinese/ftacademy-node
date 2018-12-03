@@ -47,19 +47,19 @@
           </div>
 
           <div class="card-footer">
-            {% for cycle, price in product.prices %}
+            {% for priceTag in product.prices %}
             <div class="text-center mb-2">
-              <a href="/subscription/{{product.tier}}/{{cycle}}"
+              <a href="/subscription/{{product.tier}}/{{priceTag.cycle}}"
               {% if cycle == "month" %}
               class="btn btn-outline-primary"
               {% else %}
               class="btn btn-primary text-white"
               {% endif %}>
-                {% if price.promo %}
-                  <s>¥{{ price.origin | toCurrency }}/{{ cycle | localize }}</s> 
-                  ¥{{ price.promo | toCurrency }}/{{ cycle | localize }}
+                {% if priceTag.sale %}
+                  <s>¥{{ priceTag.original | toCurrency }}/{{ priceTag.cycle | localize }}</s> 
+                  ¥{{ priceTag.sale | toCurrency }}/{{ priceTag.cycle | localize }}
                 {% else %}
-                  ¥{{ price.origin | toCurrency }}/{{ cycle | localize }}
+                  ¥{{ priceTag.original | toCurrency }}/{{ priceTag.cycle | localize }}
                 {% endif %}
               </a>
             </div>
