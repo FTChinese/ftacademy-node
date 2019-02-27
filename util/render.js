@@ -2,13 +2,21 @@ const path = require("path");
 const nunjucks = require("nunjucks");
 const util = require("util");
 const numeral = require("numeral");
-const localized = require("../model/localized.json");
+const localized = {
+  "year": "年",
+  "month": "月",
+  "CNY": "¥",
+  "standard": "标准会员",
+  "premium": "高端会员",
+  "tenpay": "微信支付",
+  "alipay": "支付宝",
+};
 
 const env = nunjucks.configure(
   [
     path.resolve(__dirname, "../view"),
     path.resolve(__dirname, "../client")
-  ], 
+  ],
   {
     noCache: process.env.NODE_ENV === "development",
     watch: process.env.NODE_ENV === "development"
