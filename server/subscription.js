@@ -2,21 +2,19 @@ const pkg = require('../package.json');
 const debug = require("debug")("fta:subs");
 const Router = require("koa-router");
 const request = require("superagent");
-const endpoints = require("../util/endpoints");
 const render = require("../util/render");
 const {
   getPaywall,
   buildProducts,
+  findPlan,
 } = require("../model/paywall");
+const {
+  subsApi,
+  clientHeaders,
+  KEY_USER_ID,
+} = require("../lib/request")
 
 const router = new Router();
-
-const tiers = ["standard", "premium"];
-const cycles = ["year", "month"];
-const payMethods = {
-  alipay: endpoints.alipay,
-  wxpay: endpoints.wxpay,
-};
 
 // Show paywall.
 router.get("/", async (ctx, next) => {
@@ -41,12 +39,10 @@ router.get("/:tier/:cycle", async (ctx, next) => {
 
   const key = `${tier}_${cycle}`;
 
-  const paywall = getPaywall();
-
   /**
    * @type {IPlan}
    */
-  const plan = paywall.plans[key];
+  const plan = findPlan(tier, cycle);
 
   if (!plans) {
     ctx.status = 404;
@@ -76,33 +72,33 @@ router.post("/:tier/:cycle", async (ctx, next) => {
   const cycle = params.cycle;
 
   // If request url is not valid.
-  const key = `${tier}_${cycle}`;
-  if (!defaultPlans.hasOwnProperty(key)) {
-    ctx.status = 404;
+  if (!findPlan(tier,cycle)) {
+    ctx.state = 404;
     return
   }
 
   const payMethod = ctx.request.body.paymentMethod;
 
-  if (!payMethods.hasOwnProperty(payMethod)) {
+  let apiUrl;
+  switch (payMethod) {
+    case "alipay":
+      apiUrl = subsApi.alipay(tier, cycle);
+      break;
 
-    ctx.session.noPayMethod = true;
+    case "wxpay":
+      apiUrl = subsApi.wxpay(tier, cycle);
+      break;
 
-    ctx.redirect(ctx.path);
-    return;
+    default:
+      ctx.session.noPayMethod = true;
+      ctx.redirect(ctx.path);
+      return
   }
 
-  const url = payMethods[payMethod];
-
   try {
-    const resp = await request.post(`${url}/${tier}/${cycle}`)
-      .set({
-        "X-User-Id": "",
-        "X-Client-Type": "web",
-        "X-Client-Version": pkg.version,
-        "X-User-Agent": ctx.header["user-agent"],
-        "X-User-Ip": ctx.ip,
-      });
+    const resp = await request.post(apiUrl)
+      .set(KEY_USER_ID, ctx.session.user.id)
+      .set(clientHeaders(ctx.ip, ctx.header["user-agent"]));
 
     ctx.body = resp.body;
   } catch(e) {

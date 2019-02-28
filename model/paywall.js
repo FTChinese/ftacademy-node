@@ -18,7 +18,7 @@ const products = require("./products.json");
 /**
  * @returns {IPaywall}
  */
-exports.getPaywall = function () {
+const getPaywall = exports.getPaywall = function () {
   const startAt = DateTime.fromISO(promo.startAt);
   const endAt = DateTime.fromISO(promo.endAt);
 
@@ -61,4 +61,21 @@ exports.buildProducts = function (pricing) {
 
     return p;
   });
+}
+
+/**
+ * @param {string} tier - standard | premium
+ * @param {string} cycle - year | month
+ * @returns {IPlan}
+ */
+exports.findPlan = function(tier, cycle) {
+  const key = `${tier}_${cycle}`;
+
+  const paywall = getPaywall();
+
+  if (paywall.plans.hasOwnProperty(key)) {
+    return paywall.plans[key];
+  }
+
+  return null
 }
