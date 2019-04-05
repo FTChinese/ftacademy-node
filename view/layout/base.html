@@ -19,12 +19,39 @@
   <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.css">
   <link rel="stylesheet" href="/main.css">
   {% endif %}
-  
+
 </head>
 <body>
   <header class="navbar o-header">
-    <div class="container justify-content-center">
-      <span class="navbar-brand">FT中文网 - 会员订阅</span>
+    <div class="container justify-content-between">
+      <a class="navbar-brand" href="http://www.ftchinese.com" target="__blank">FT中文网</a>
+
+      <span class="navbar-text mr-auto">会员订阅</span>
+
+      {% if user %}
+        <div class="dropdown">
+          <a class="dropdown-toggle"
+            href="#"
+            role="button"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false">myFT</a>
+          <div class="dropdown-menu dropdown-menu-right">
+            <h6 class="dropdown-header">{{user.userName}}</h6>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" target="__blank" href="{{sitemap.profile}}">设置</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{{sitemap.logout}}">退出</a>
+          </div>
+        </div>
+      {% else %}
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" target="__blank" href="{{sitemap.login}}">登录</a>
+          </li>
+        </ul>
+
+      {% endif %}
     </div>
   </header>
 
@@ -36,26 +63,26 @@
     <div class="container">
       <div class="o-footer__row">
         <ul class="o-footer__link-items">
-          
+
           <li class="o-footer__link-item"><a class="o-footer__link" href="http://www.ftchinese.com/m/corp/aboutus.html" target="_blank">关于我们</a></li>
-          
+
           <li class="o-footer__link-item"><a class="o-footer__link" href="https://ft.wd3.myworkdayjobs.com/FT_Chinese_External_Careers" target="_blank">加入我们</a></li>
-          
+
           <li class="o-footer__link-item"><a class="o-footer__link" href="http://www.ftchinese.com/m/corp/faq.html" target="_blank">问题回馈</a></li>
-          
+
           <li class="o-footer__link-item"><a class="o-footer__link" href="http://www.ftchinese.com/m/corp/contact.html" target="_blank">联系方式</a></li>
-          
+
           <li class="o-footer__link-item"><a class="o-footer__link" href="http://www.ftchinese.com/m/corp/partner.html" target="_blank">合作伙伴</a></li>
-          
+
           <li class="o-footer__link-item"><a class="o-footer__link" href="http://www.ftchinese.com/m/corp/service.html" target="_blank">服务条款</a></li>
-          
+
           <li class="o-footer__link-item"><a class="o-footer__link" href="http://www.ftchinese.com/m/corp/sales.html" target="_blank">广告业务</a></li>
-          
+
           <li class="o-footer__link-item"><a class="o-footer__link" href="http://www.ftchinese.com/m/corp/copyright.html" target="_blank">版权声明</a></li>
-          
+
           <li class="o-footer__link-item"><a class="o-footer__link" href="http://www.ftchinese.com/m/marketing/ftc.html" target="_blank">最新动态</a></li>
-          
-        </ul>				
+
+        </ul>
       </div>
 
       <div class="o-footer__copyright">
