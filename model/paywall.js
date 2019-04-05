@@ -2,80 +2,157 @@ const {
   DateTime,
 } = require("luxon");
 const debug = require("debug")("fta:paywall");
+
 /**
  * @type {IPaywall}
  */
 const defaultPaywall = require("./paywall-default.json");
 /**
+ * @type {IPricing}
+ */
+const defaultPricing = require("./pricing.json");
+/**
  * @type {IPromo}
  */
-const promo = require("./paywall-promo");
-/**
- * @type {IProduct[]}
- */
-const products = require("./products.json");
+const promo = require("./promo.json");
 
-/**
- * @returns {IPaywall}
- */
-const getPaywall = exports.getPaywall = function () {
-  const startAt = DateTime.fromISO(promo.startAt);
-  const endAt = DateTime.fromISO(promo.endAt);
-
-  debug("Start time: %s", startAt);
-  debug("End time: %s", endAt)
-
-  if (!startAt.isValid || !endAt.isValid) {
-    return defaultPaywall;
+class Promo {
+  /**
+   * @param {IPromo} promo
+   */
+  constructor (promo) {
+    this._promo = promo;
+    this.startAt = DateTime.fromISO(promo.startAt);
+    this.endAt = DateTime.fromISO(promo.endAt);
   }
 
-  const now = DateTime.local();
-
-  debug("Now: %s", now);
-
-  if (now >= startAt && now <= endAt) {
-    debug("Using promo")
-    return promo;
+  get banner() {
+    return this._promo.banner;
   }
 
-  debug("Using default paywall");
-  return defaultPaywall;
-}
+  get pricing() {
+    return this._promo.pricing;
+  }
 
-/**
- * @param {IPricing} pricing
- * @returns {IProduct[]}
- */
-exports.buildProducts = function (pricing) {
-  return products.map(product => {
-    const p = Object.assign({}, product);
-    switch (product.tier) {
-      case "standard":
-        p.pricing = [pricing.standard_year, pricing.standard_month];
-        break;
+  /**
+   * @description Check whether the promotion plan is in valid time range.
+   * @returns {boolean}
+   */
+  isInEffect() {
 
-      case "premium":
-        p.pricing = [pricing.premium_year];
-        break;
+    if (!this.startAt.isValid || !this.endAt.isValid) {
+      return false;
     }
 
-    return p;
-  });
+    const now = DateTime.utc();
+
+    debug("Now: %s", now.toString());
+
+    if (this.startAt <= now && this.endAt >= now) {
+      debug("Using promo")
+      return true;
+    }
+
+    return false;
+  }
 }
 
-/**
- * @param {string} tier - standard | premium
- * @param {string} cycle - year | month
- * @returns {IPlan}
- */
-exports.findPlan = function(tier, cycle) {
-  const key = `${tier}_${cycle}`;
-
-  const paywall = getPaywall();
-
-  if (paywall.plans.hasOwnProperty(key)) {
-    return paywall.plans[key];
+class Paywall {
+  constructor() {
+    this._defaultPaywall = defaultPaywall;
+    this._defaultPricing = defaultPricing;
+    this._promo = new Promo(promo);
   }
 
-  return null
+  /**
+   * @param {IPromo} p
+   */
+  setPromo(p) {
+    this._promo = new Promo(p);
+  }
+
+  /**
+   * @returns {IPaywall}
+   */
+  getPaywall () {
+    if (this._promo.isInEffect()) {
+      return this.buildPromoPaywall();
+    }
+
+    debug("Using default paywall");
+    return this._defaultPaywall;
+  }
+
+  /**
+   * @returns {IPricing}
+   */
+  getPricing() {
+    if (this._promo.isInEffect()) {
+      return this._promo.pricing;
+    }
+
+    return this._defaultPricing;
+  }
+
+  /**
+   * @param {string} tier - standard | premium
+   * @param {string} cycle - year | cycle
+   * @returns {(IPlan|null)}
+   */
+  findPlan(tier, cycle) {
+    const key = `${tier}_${cycle}`;
+
+    const pricing = this.getPricing();
+
+    if (pricing.hasOwnProperty(key)) {
+      return pricing[key];
+    }
+
+    return null
+  }
+
+  /**
+   * @private
+   * @returns {IPaywall}
+   */
+  buildPromoPaywall() {
+    const promoPricing = this._promo.pricing;
+    const banner = this._promo.banner;
+
+    return {
+      banner,
+      products: this._defaultPaywall.products.map(product => {
+        const p = Object.assign({}, product);
+        switch (product.tier) {
+          case "standard":
+            p.pricing = [
+              promoPricing.standard_year,
+              promoPricing.standard_month
+            ];
+            break;
+
+          case "premium":
+            p.pricing = [
+              promoPricing.premium_year
+            ];
+            break;
+        }
+
+        return p;
+      }),
+    }
+  }
+
+  static getInstance() {
+    let inst;
+
+    if (!inst) {
+      inst = new Paywall();
+    }
+
+    return inst;
+  }
 }
+
+exports.Promo = Promo;
+exports.Paywall = Paywall;
