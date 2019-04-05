@@ -15,6 +15,8 @@ const {
 
 const home = require("./server/home");
 const subscription = require("./server/subscription");
+const login = require("./server/login");
+const logout = require("./server/logout");
 const version = require("./server/version");
 
 const isProduction = process.env.NODE_ENV === "production";
@@ -40,6 +42,8 @@ app.use(env());
 app.use(handleErrors());
 
 router.get("/", home)
+router.get("/login", login);
+router.get("/logout", logout);
 router.use("/subscription", subscription);
 router.use("/__version", version);
 
