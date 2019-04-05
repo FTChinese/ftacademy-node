@@ -1,34 +1,43 @@
-const pkg = require('../package.json');
 const debug = require("debug")("fta:subs");
 const Router = require("koa-router");
+const QRCode = require("qrcode");
 const request = require("superagent");
 const render = require("../util/render");
+const MobileDetect = require("mobile-detect");
+
 const {
-  getPaywall,
-  buildProducts,
-  findPlan,
+  Account,
+} = require("../model/account");
+const {
+  Paywall,
 } = require("../model/paywall");
 const {
-  subsApi,
-  clientHeaders,
-  KEY_USER_ID,
-} = require("../lib/request")
+  clientApp,
+} = require("./middleware");
 
 const router = new Router();
 
-// Show paywall.
+/**
+ * @description Show paywall.
+ * /subscription
+ */
 router.get("/", async (ctx, next) => {
-  const paywall = getPaywall();
+  const paywall = Paywall.getInstance();
 
-  ctx.state.banner = paywall.banner;
-  ctx.state.products = buildProducts(paywall.plans);
+  const paywallData = paywall.getPaywall();
+
+  ctx.state.banner = paywallData.banner;
+  ctx.state.products = paywallData.products;
 
   debug("Products: %O", ctx.state.products);
 
   ctx.body = await render("subscription.html", ctx.state);
 });
 
-// Show payment.
+/**
+ * @description Show payment.
+ * /subscription/{standard|premium}/{year|month}
+ */
 router.get("/:tier/:cycle", async (ctx, next) => {
   /**
    * @type {{tier: string, cycle: string}}
@@ -37,12 +46,11 @@ router.get("/:tier/:cycle", async (ctx, next) => {
   const tier = params.tier;
   const cycle = params.cycle;
 
-  const key = `${tier}_${cycle}`;
-
+  const paywall = Paywall.getInstance();
   /**
    * @type {IPlan}
    */
-  const plan = findPlan(tier, cycle);
+  const plan = paywall.findPlan(tier, cycle);
 
   if (!plans) {
     ctx.status = 404;
@@ -62,48 +70,79 @@ router.get("/:tier/:cycle", async (ctx, next) => {
   delete ctx.session.noPayMethod;
 });
 
-// Accept payment.
-router.post("/:tier/:cycle", async (ctx, next) => {
-  /**
-   * @type {{tier: string, cycle: string}}
-   */
-  const params = ctx.params;
-  const tier = params.tier;
-  const cycle = params.cycle;
+/**
+ * @description Accept payment.
+ * /subscription/{standard|premium}/{year|month}
+ */
+router.post("/:tier/:cycle",
+  clientApp,
 
-  // If request url is not valid.
-  if (!findPlan(tier,cycle)) {
-    ctx.state = 404;
-    return
-  }
+  async (ctx, next) => {
+    /**
+     * @type {{tier: string, cycle: string}}
+     */
+    const params = ctx.params;
+    const tier = params.tier;
+    const cycle = params.cycle;
 
-  const payMethod = ctx.request.body.paymentMethod;
+    /**
+     * @type {"ailpay" | "wxpay"}
+     */
+    const payMethod = ctx.request.body.paymentMethod;
 
-  let apiUrl;
-  switch (payMethod) {
-    case "alipay":
-      apiUrl = subsApi.alipay(tier, cycle);
-      break;
-
-    case "wxpay":
-      apiUrl = subsApi.wxpay(tier, cycle);
-      break;
-
-    default:
-      ctx.session.noPayMethod = true;
-      ctx.redirect(ctx.path);
+    const paywall = Paywall.getInstance();
+    // If request url is not valid.
+    if (!paywall.findPlan(tier,cycle)) {
+      ctx.state = 404;
       return
-  }
+    }
 
-  try {
-    const resp = await request.post(apiUrl)
-      .set(KEY_USER_ID, ctx.session.user.id)
-      .set(clientHeaders(ctx.ip, ctx.header["user-agent"]));
+    // Detect device type.
+    const md = new MobileDetect(ctx.header["user-agent"]);
+    const isMobile = !!md.mobile();
 
-    ctx.body = resp.body;
-  } catch(e) {
-    throw e;
+    debug("Client app: %O", ctx.state.clientApp);
+    const account = new Account(ctx.session.user, ctx.state.clientApp);
+
+    try {
+      switch (payMethod) {
+        // Use user-agent to decide launch desktop web pay or mobile web pay
+        case "alipay":
+          // If user is using mobile browser on phone
+          if (isMobile) {
+            const aliOrder = await account.aliMobileOrder(tier, cycle);
+            ctx.redirect(aliOrder.payUrl);
+          } else {
+            // Otherwise treat user on desktop
+            const aliOrder = await account.aliDesktopOrder(tier, cycle);
+            ctx.redirect(aliOrder.payUrl);
+          }
+          break;
+
+        case "wechat":
+        // NOTE: we cannot use wechat's MWEB and JSAPI payment due to the fact those two
+        // methods could only be used by ftacademy.com
+        // accoding to wechat's rule.
+          /**
+           * @type {{codeUrl: string}}
+           */
+          const wxPrepay = await account.wxDesktopOrder(tier, cycle);
+
+          const dataUrl = await QRCode.toDataURL(wxPrepay.codeUrl);
+
+          ctx.state.plan = plan;
+          ctx.state.qrData = dataUrl;
+          ctx.body = await render("subscription/wxpay-qr.html", ctx.state);
+          break;
+
+        default:
+          ctx.state = 404;
+          return;
+      }
+    } catch (e) {
+      throw e;
+    }
   }
-});
+);
 
 module.exports = router.routes();
