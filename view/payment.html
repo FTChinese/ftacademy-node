@@ -7,7 +7,7 @@
   <div class="row justify-content-center mb-5 mt-5">
     <div class="col-sm-5">
       <div class="card">
-        <div class="card-header">您选择订阅FT会员</div>
+        <div class="card-header">订阅FT会员</div>
         <div class="list-group list-group-flush">
           <li class="list-group-item d-flex justify-content-between">
             <span>会员类型:</span>
@@ -16,33 +16,42 @@
 
           <li class="list-group-item d-flex justify-content-between">
             <span>支付金额:</span>
-            <span>¥{{ plan.price | toCurrency }}</span>
+            <span>¥{{ plan.netPrice | toCurrency }}</span>
           </li>
         </div>
       </div>
     </div>
   </div>
-  
+
   <div class="row justify-content-center mb-5">
     <div class="col-sm-5">
       <div class="card">
         <div class="card-header">请选择支付方式</div>
         <div class="card-body">
           <form action="" method="post">
-            
+
             <div class="form-check mb-3">
-              <input class="form-check-input" type="radio" name="paymentMethod" id="alipay" value="alipay">
+              <input class="form-check-input"
+                type="radio"
+                name="paymentMethod"
+                id="alipay"
+                value="alipay"
+                required>
               <label class="form-check-label d-block" for="alipay">
                 <img src="http://www.ftacademy.cn/images/alipay-68x24.png" alt="支付宝">
               </label>
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="radio" name="paymentMethod" id="wxpay" value="wxpay">
+              <input class="form-check-input"
+                type="radio"
+                name="paymentMethod"
+                id="wxpay"
+                value="wxpay">
               <label class="form-check-label d-block" for="wxpay">
                 <img src="http://www.ftacademy.cn/images/wxpay-113x24.png" alt="微信支付">
               </label>
             </div>
-        
+
             {% if errors.payMethod %}
               <div class="form-errortext">{{errors.payMethod}}</div>
             {% endif %}
@@ -50,9 +59,9 @@
             <div class="mt-3">
               <button type="submit" class="btn btn-primary btn-block">确认</button>
             </div>
-            
+
           </form>
-        </div> 
+        </div>
       </div>
     </div>
   </div>
