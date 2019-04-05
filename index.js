@@ -7,9 +7,11 @@ const session = require("koa-session");
 
 const boot = require("./util/boot-app");
 
-const env = require("./middleware/env");
-const handlError = require("./middleware/handle-error");
-const noCache = require("./middleware/no-cache");
+const {
+  env,
+  handleErrors,
+  noCache,
+} = require("./server/middleware");
 
 const home = require("./server/home");
 const subscription = require("./server/subscription");
@@ -20,6 +22,7 @@ const app = new Koa();
 const router = new Router();
 
 app.proxy = true;
+app.keys = ['SEKRIT1', 'SEKRIT2'];
 
 app.use(logger());
 
@@ -30,12 +33,11 @@ if (!isProduction) {
 }
 
 app.use(session({
-  key: "_ftc:sess",
-  signed: false
+  key: "_ftc:subs"
 }, app));
 app.use(bodyParser());
 app.use(env());
-app.use(handlError());
+app.use(handleErrors());
 
 router.get("/", home)
 router.use("/subscription", subscription);
