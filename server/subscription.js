@@ -52,7 +52,7 @@ router.get("/:tier/:cycle", async (ctx, next) => {
    */
   const plan = paywall.findPlan(tier, cycle);
 
-  if (!plans) {
+  if (!plan) {
     ctx.status = 404;
     return;
   }
