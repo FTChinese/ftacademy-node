@@ -4,6 +4,9 @@ const pkg = require("../package.json");
 const {
   matrix,
 } = require("../model/footer");
+const {
+  sitemap,
+} = require("../lib/sitemap");
 
 const {
   isAPIError,
@@ -20,6 +23,8 @@ exports.env = function () {
       footer: matrix,
       version: pkg.version,
     };
+
+    ctx.state.sitemap = sitemap;
 
     await next();
   }
