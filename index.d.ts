@@ -40,3 +40,8 @@ declare interface IPromo {
   pricing: IPricing;
   createdAt: string;
 }
+
+declare interface IOAuthClient {
+  client_id: string;
+  client_secret: string;
+}
