@@ -42,8 +42,8 @@ app.use(env());
 app.use(handleErrors());
 
 router.get("/", home)
-router.get("/login", login);
-router.get("/logout", logout);
+router.use("/login", login);
+router.use("/logout", logout);
 router.use("/subscription", subscription);
 router.use("/__version", version);
 
