@@ -22,6 +22,8 @@ const router = new Router();
  * /subscription
  */
 router.get("/", async (ctx, next) => {
+  debug("Session state: %O", ctx.session.state);
+
   const paywall = Paywall.getInstance();
 
   const paywallData = paywall.getPaywall();

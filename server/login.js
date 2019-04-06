@@ -3,6 +3,9 @@ const debug = require('debug')('fta:login');
 const {
   buildOAuthUrl,
 } = require("../lib/request");
+const {
+  generateState,
+} = require("../lib/random");
 const router = new Router();
 
 /**
@@ -10,7 +13,9 @@ const router = new Router();
  *
  */
 router.get('/', async function (ctx) {
-  ctx.body = await buildOAuthUrl();
+  const state = await generateState();
+  ctx.session.state = state;
+  ctx.body = await buildOAuthUrl(state);
 });
 
 module.exports = router.routes();
