@@ -1,16 +1,16 @@
 const Router = require('koa-router');
 const debug = require('debug')('fta:login');
-
 const {
-  sitemap
-} = require("../lib/sitemap");
-
+  buildOAuthUrl,
+} = require("../lib/request");
 const router = new Router();
 
-// Show login page
+/**
+ * @description Send authorization request to /authorize?response_type=code&client_id=xxxx&redirect_uri=xxx&state=xxx
+ *
+ */
 router.get('/', async function (ctx) {
-  // If user is trying to access this page when he is already logged in, redirect away
-
+  ctx.body = await buildOAuthUrl();
 });
 
 module.exports = router.routes();
