@@ -123,3 +123,5 @@ exports.clientApp = function() {
     await next();
   }
 }
+
+exports.isLoggedIn = isLoggedIn;
