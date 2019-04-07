@@ -13,7 +13,11 @@ const {
 } = require("../model/paywall");
 const {
   clientApp,
+  isLoggedIn,
 } = require("./middleware");
+const {
+  sitemap,
+} = require("../lib/sitemap");
 
 const router = new Router();
 
@@ -56,6 +60,17 @@ router.get("/:tier/:cycle", async (ctx, next) => {
 
   if (!plan) {
     ctx.status = 404;
+    return;
+  }
+
+  if (!isLoggedIn()) {
+    // Remeber which product used selected.
+    ctx.session.product = {
+      tier,
+      cycle,
+    }
+
+    ctx.redirect(sitemap.login);
     return;
   }
 
