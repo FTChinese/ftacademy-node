@@ -1,7 +1,7 @@
 const Router = require('koa-router');
 const debug = require('debug')('fta:login');
 const {
-  buildOAuthUrl,
+  oauthClient,
 } = require("../lib/request");
 const {
   generateState,
@@ -15,7 +15,7 @@ const router = new Router();
 router.get('/', async function (ctx) {
   const state = await generateState();
   ctx.session.state = state;
-  ctx.body = await buildOAuthUrl(state);
+  ctx.body = await oauthClient.buildCodeUrl(state);
 });
 
 module.exports = router.routes();
