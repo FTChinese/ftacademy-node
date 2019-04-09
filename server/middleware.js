@@ -1,5 +1,8 @@
 const debug = require("debug")("fta:middleware");
-const isProduction = (process.env.NODE_ENV === 'production') || (process.env.NODE_ENV === "sandbox");
+const {
+  isProduction,
+  isSandbox,
+} = require("../lib/config")
 const pkg = require("../package.json");
 const {
   matrix,
@@ -18,7 +21,8 @@ exports.env = function () {
   return async (ctx, next) => {
 
     ctx.state.env = {
-      isProduction,
+      isOnline: isProduction || isSandbox,
+      isSandbox,
       year: new Date().getFullYear(),
       footer: matrix,
       version: pkg.version,

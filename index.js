@@ -1,3 +1,11 @@
+const {
+  viper,
+  urlPrefix,
+} = require("./lib/config");
+const config = viper.setConfigPath(process.env.HOME)
+  .setConfigName("config/api.toml")
+  .readInConfig()
+  .getConfig();
 const path = require("path");
 const Koa = require("koa");
 const Router = require("koa-router");
@@ -23,12 +31,13 @@ const version = require("./server/version");
 
 const isProduction = process.env.NODE_ENV === "production";
 const app = new Koa();
+
 const router = new Router({
-  prefix: process.env.URL_PREFIX
+  prefix: urlPrefix,
 });
 
 app.proxy = true;
-app.keys = ['SEKRIT1', 'SEKRIT2'];
+app.keys = [config.koa_session.ftacademy];
 
 app.use(logger());
 
