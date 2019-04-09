@@ -1,7 +1,6 @@
 const debug = require("debug")("fta:subs");
 const Router = require("koa-router");
 const QRCode = require("qrcode");
-const request = require("superagent");
 const render = require("../util/render");
 const MobileDetect = require("mobile-detect");
 
@@ -63,8 +62,8 @@ router.get("/:tier/:cycle", async (ctx, next) => {
     return;
   }
 
-  if (!isLoggedIn()) {
-    // Remeber which product used selected.
+  if (!isLoggedIn(ctx)) {
+    // Remeber which product user selected.
     ctx.session.product = {
       tier,
       cycle,
