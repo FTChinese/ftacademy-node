@@ -7,6 +7,7 @@ router.get("/", async (ctx, next) => {
   ctx.body = {
     "name": pkg.name,
     "version": pkg.version,
+    "env": process.env.NODE_ENV,
   }
 });
 
