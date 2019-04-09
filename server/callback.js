@@ -19,19 +19,23 @@ router.get('/', async function (ctx) {
    */
   const query = ctx.request.query;
   const state = ctx.session.state;
-  debug(`query state: ${queyr.state}. Session state: ${state}`);
+
+  debug("Query state: %s. Session state: %s", query.state, state);
 
   if (!query.state) {
+    debug("Query paramter does not contain state");
     ctx.state = 404;
     return;
   }
 
   if (query.state != state) {
+    debug("state does not match");
     ctx.state = 404;
     return;
   }
 
-  if (query.code) {
+  if (!query.code) {
+    debug("Query does not have code");
     ctx.state = 404;
     return;
   }
