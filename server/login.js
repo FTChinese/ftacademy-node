@@ -14,8 +14,15 @@ const router = new Router();
  */
 router.get('/', async function (ctx) {
   const state = await generateState();
+
+  debug("Authorizetion code state: %s", state);
+
   ctx.session.state = state;
-  ctx.body = await oauthClient.buildCodeUrl(state);
+  const redirectTo = await oauthClient.buildCodeUrl(state);
+
+  debug("Redirect to %s", redirectTo);
+
+  ctx.redirect(redirectTo);
 });
 
 module.exports = router.routes();
