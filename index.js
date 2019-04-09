@@ -10,18 +10,22 @@ const boot = require("./util/boot-app");
 const {
   env,
   handleErrors,
+  checkSession,
   noCache,
 } = require("./server/middleware");
 
 const home = require("./server/home");
 const subscription = require("./server/subscription");
 const login = require("./server/login");
+const oauthCallback = require("./server/callback");
 const logout = require("./server/logout");
 const version = require("./server/version");
 
 const isProduction = process.env.NODE_ENV === "production";
 const app = new Koa();
-const router = new Router();
+const router = new Router({
+  prefix: process.env.URL_PREFIX
+});
 
 app.proxy = true;
 app.keys = ['SEKRIT1', 'SEKRIT2'];
@@ -43,8 +47,9 @@ app.use(handleErrors());
 
 router.get("/", home)
 router.use("/login", login);
+router.use("/callback", oauthCallback);
 router.use("/logout", logout);
-router.use("/subscription", subscription);
+router.use("/subscription", checkSession(), subscription);
 router.use("/__version", version);
 
 app.use(router.routes());
