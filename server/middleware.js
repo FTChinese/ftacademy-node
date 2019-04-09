@@ -1,5 +1,5 @@
 const debug = require("debug")("fta:middleware");
-const isProduction = process.env.NODE_ENV === 'production';
+const isProduction = (process.env.NODE_ENV === 'production') || (process.env.NODE_ENV === "sandbox");
 const pkg = require("../package.json");
 const {
   matrix,
@@ -38,13 +38,11 @@ exports.env = function () {
  * Suppose you want to access `/profile` without login. This middleware will redirect you want to `/login`. And then when you are accessing `/login`, this middleware will again first check if you're loggedin. Certainly your are not. It again redirect you to `/login`, check login state again and redirect you to `/login`, indefinitely.
  * @return {Function}
  */
-exports.checkSession = function checkSession({redirect=true}={}) {
+exports.checkSession = function checkSession() {
   return async (ctx, next) => {
 
     // Do nothing for `/favicon.ico`
     if (ctx.path == '/favicon.ico') return;
-
-    debug('Redirect: %s', redirect);
 
     if (isLoggedIn(ctx)) {
       debug('Session data: %O', ctx.session);
@@ -58,11 +56,6 @@ exports.checkSession = function checkSession({redirect=true}={}) {
     }
 
     ctx.state.user = null;
-
-    if (redirect) {
-
-      return ctx.redirect(sitemap.login);
-    }
 
     // Remember to let the following middleware to excute if users are not loggedin and you do not want to redirect away.
     return await next();
