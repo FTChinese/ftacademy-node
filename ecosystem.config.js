@@ -42,7 +42,7 @@ module.exports = {
     }
   ],
   deploy: {
-    "fta": {
+    "production": {
       user: "node",
       host: "nodeserver",
       ref: "origin/master",
