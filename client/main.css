@@ -2,7 +2,10 @@ body {
     min-height: 100vh;
     font-family: "Helvetica Neue", "Lucida Grande", Verdana, "PingFang SC", "PingFang TC", "Hiragino Sans GB", "Heiti SC", "Heiti TC", "WenQuanYi Micro Hei", "Microsoft YaHei", "Microsoft JhengHei", STHeiti, sans-serif;
     background-color: #FFF1E5; }
-  
+
+#site-content {
+    min-height: 80vh;
+    }
 a, .text-teal {
     color: #0d7680
 }
@@ -12,7 +15,7 @@ a:hover {
 }
   .alert, .btn {
     border-radius: 0; }
-  
+
   .btn-primary {
     background-color: #0D7680;
     color: #fff; }
@@ -31,7 +34,7 @@ a:hover {
       color: #fff;
       background-color: #08474D;
       border-color: transparent; }
-  
+
   .btn-outline-primary {
     color: #0D7680;
     background-color: transparent;
@@ -53,7 +56,7 @@ a:hover {
       color: #fff;
       background-color: #0D7680;
       border-color: #0D7680; }
-      
+
   .o-toggler {
     padding: 0.25rem 0.75rem;
     font-size: 1.25rem;
@@ -67,7 +70,7 @@ a:hover {
   .form-label {
     font-weight: 600;
     color: #33302E; }
-  
+
   .form-control {
     border-radius: 0; }
     .form-control:disabled {
@@ -75,7 +78,7 @@ a:hover {
       color: #66605C;
       border-color: #E6D9CE;
       cursor: default; }
-  
+
   .form-errortext {
     color: #CC0000;
     font-size: 14px;
@@ -84,7 +87,7 @@ a:hover {
     display: block;
     margin-top: -1px;
     padding: 3px 0; }
-  
+
   .form-invalid {
     background-color: #fff;
     color: #CC0000;
