@@ -62,7 +62,7 @@
           <div class="card-footer">
             {% for plan in product.pricing %}
             <div class="text-center mb-2">
-              <a href="/subscription/{{plan.tier}}/{{plan.cycle}}"
+              <a href="{{ sitemap.pay(plan.tier, plan.cycle) }}"
                 {% if plan.cycle == "month" %}
                 class="btn btn-outline-primary"
                 {% else %}
@@ -85,7 +85,5 @@
     {% endfor %}
   </div>
 </div>
-
-
 
 {% endblock %}
