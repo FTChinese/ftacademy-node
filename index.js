@@ -1,6 +1,7 @@
 const {
   viper,
   urlPrefix,
+  isProduction,
 } = require("./lib/config");
 const config = viper.setConfigPath(process.env.HOME)
   .setConfigName("config/api.toml")
@@ -29,7 +30,6 @@ const oauthCallback = require("./server/callback");
 const logout = require("./server/logout");
 const version = require("./server/version");
 
-const isProduction = process.env.NODE_ENV === "production";
 const app = new Koa();
 
 const router = new Router({
