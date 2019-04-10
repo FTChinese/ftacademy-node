@@ -104,11 +104,9 @@ class Paywall {
 
     const pricing = this.getPricing();
 
-    if (pricing.hasOwnProperty(key)) {
-      return pricing[key];
-    }
+    const plan = pricing[key];
 
-    return null
+    return plan ? plan : null;
   }
 
   /**
