@@ -91,7 +91,7 @@ router.get("/:tier/:cycle", async (ctx, next) => {
  * /subscription/{standard|premium}/{year|month}
  */
 router.post("/:tier/:cycle",
-  clientApp,
+  clientApp(),
 
   async (ctx, next) => {
     /**
@@ -100,15 +100,19 @@ router.post("/:tier/:cycle",
     const params = ctx.params;
     const tier = params.tier;
     const cycle = params.cycle;
+    debug("Tier: %s, cycle: %s", tier, cycle);
 
     /**
      * @type {"ailpay" | "wxpay"}
      */
-    const payMethod = ctx.request.body.paymentMethod;
+    const payMethod = ctx.request.body.payMethod;
 
-    const paywall = Paywall.getInstance();
+    const plan = Paywall.getInstance().findPlan(tier, cycle);
+
+    debug("Plan: %O", plan);
+
     // If request url is not valid.
-    if (!paywall.findPlan(tier,cycle)) {
+    if (!plan) {
       ctx.state = 404;
       return
     }
@@ -148,7 +152,7 @@ router.post("/:tier/:cycle",
 
           ctx.state.plan = plan;
           ctx.state.qrData = dataUrl;
-          ctx.body = await render("subscription/wxpay-qr.html", ctx.state);
+          ctx.body = await render("wx-qr.html", ctx.state);
           break;
 
         default:
