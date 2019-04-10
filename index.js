@@ -1,7 +1,7 @@
 const {
   viper,
   urlPrefix,
-  isProduction,
+  isDev,
 } = require("./lib/config");
 const config = viper.setConfigPath(process.env.HOME)
   .setConfigName("config/api.toml")
@@ -20,7 +20,6 @@ const {
   env,
   handleErrors,
   checkSession,
-  noCache,
 } = require("./server/middleware");
 
 const home = require("./server/home");
@@ -41,7 +40,7 @@ app.keys = [config.koa_session.ftacademy];
 
 app.use(logger());
 
-if (!isProduction) {
+if (!isDev) {
   const static = require("koa-static");
   app.use(static(path.resolve(process.cwd(), "node_modules")));
   app.use(static(path.resolve(process.cwd(), "client")));
