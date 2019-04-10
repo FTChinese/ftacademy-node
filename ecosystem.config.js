@@ -48,9 +48,8 @@ module.exports = {
       ref: "origin/master",
       repo: "https://github.com/FTChinese/ftacademy-node.git",
       path: "/home/node/next/ftacademy",
-      "pre-setup": "echo 'pre step'",
+      "pre-setup": "node -v",
       "post-setup": "ls -la",
-      "pre-deploy-local": "echo 'Begin to deploy'",
       "post-deploy": "npm install --production && pm2 startOrRestart ecosystem.config.js --env production"
     },
     "v2": {
@@ -59,9 +58,8 @@ module.exports = {
       ref: "origin/master",
       repo: "https://github.com/FTChinese/ftacademy-node.git",
       path: "/home/node/next/ftacademy",
-      "pre-setup": "echo 'pre step'",
+      "pre-setup": "node -v",
       "post-setup": "ls -la",
-      "pre-deploy-local": "echo 'Begin to deploy'",
       "post-deploy": "npm install --production && pm2 startOrRestart ecosystem.config.js --env v2"
     },
     "sandbox": {
@@ -70,9 +68,8 @@ module.exports = {
       ref: "origin/master",
       repo: "https://github.com/FTChinese/ftacademy-node.git",
       path: "/home/node/next/ftacademy",
-      "pre-setup": "echo 'pre step'",
+      "pre-setup": "node -v",
       "post-setup": "ls -la",
-      "pre-deploy-local": "echo 'Begin to deploy'",
       "post-deploy": "npm install --production && pm2 startOrRestart ecosystem.config.js --env sandbox"
     }
   }
