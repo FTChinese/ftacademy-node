@@ -49,8 +49,6 @@ exports.checkSession = function checkSession() {
     if (ctx.path == '/favicon.ico') return;
 
     if (isLoggedIn(ctx)) {
-      debug('Session data: %O', ctx.session);
-
       /**
        * @type {UserSession}
        */
