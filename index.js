@@ -40,7 +40,7 @@ app.keys = [config.koa_session.ftacademy];
 
 app.use(logger());
 
-if (!isDev) {
+if (isDev) {
   const static = require("koa-static");
   app.use(static(path.resolve(process.cwd(), "node_modules")));
   app.use(static(path.resolve(process.cwd(), "client")));
