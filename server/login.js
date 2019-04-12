@@ -18,7 +18,7 @@ router.get('/', async function (ctx) {
   debug("Authorizetion code state: %s", state);
 
   ctx.session.state = state;
-  const redirectTo = await oauthClient.buildCodeUrl(state);
+  const redirectTo = oauthClient.buildCodeUrl(state);
 
   debug("Redirect to %s", redirectTo);
 
