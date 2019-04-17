@@ -1,11 +1,6 @@
 const Router = require('koa-router');
 const debug = require('debug')('fta:login');
-const {
-  oauthClient,
-} = require("../lib/request");
-const {
-  generateState,
-} = require("../lib/random");
+const oauthClient = require("../lib/oauth-client");
 const router = new Router();
 
 /**
@@ -13,12 +8,13 @@ const router = new Router();
  *
  */
 router.get('/', async function (ctx) {
-  const state = await generateState();
+  const state = await oauthClient.generateState();
 
-  debug("Authorizetion code state: %s", state);
+  debug("OAuth state: %s", state);
 
   ctx.session.state = state;
-  const redirectTo = oauthClient.buildCodeUrl(state);
+
+  const redirectTo = oauthClient.buildCodeUrl(state.v);
 
   debug("Redirect to %s", redirectTo);
 
