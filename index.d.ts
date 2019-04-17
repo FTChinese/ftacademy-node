@@ -80,3 +80,11 @@ declare interface IAccount {
   wechat: IWechat;
   membership: IMembership;
 }
+
+declare interface IAPIError {
+  message: string;
+  error?: {
+    field: string;
+    code: string;
+  }
+}
