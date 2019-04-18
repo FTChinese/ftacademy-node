@@ -26,11 +26,13 @@ module.exports = {
       },
       env_sandbox: {
         NODE_ENV: "sandbox",
+        URL_PREFIX: "/sandbox",
         PORT: 4200,
         DEBUG: "fta*"
       },
       env_v2: {
         NODE_ENV: "production",
+        URL_PREFIX: "/v2",
         PORT: 4200,
         DEBUG: "fta*"
       },
