@@ -8,6 +8,7 @@ const {
 const {
   isAPIError,
 } = require("../lib/response");
+const render = require("../util/render");
 
 const router = new Router();
 
@@ -15,11 +16,17 @@ const router = new Router();
  * @description Handle callback
  *  /callback?code=xxx&state=xxx
  */
-router.get('/', async function (ctx) {
+router.get('/', async function (ctx, next) {
   /**
-   * @type {{code: string, state: string}}
+   * @type {{code: string, state: string, error: string}}
    */
   const query = ctx.request.query;
+
+  if (query.error) {
+    ctx.state.invalid = query;
+    ctx.body = await render("oauth-callback.html", ctx.state);
+    return;
+  }
   /**
    * @type {{v: string, t: number}}
    */
@@ -29,29 +36,38 @@ router.get('/', async function (ctx) {
 
   if (!query.state) {
     debug("Query paramter does not contain state");
-    ctx.state = 404;
-    ctx.body = "state missing";
-    return;
+    ctx.state.invalid = {
+      error_description: "无效的响应: state 参数缺失"
+    };
+
+    return await next();
   }
 
   if (query.state != state.v) {
     debug("state does not match");
-    ctx.state = 404;
-    ctx.body = "state mismached";
-    return;
+    ctx.state.invalid = {
+      error_description: "无效的响应: state 不匹配"
+    };
+
+    return await next();
   }
 
   if (oauthClient.isStateExpired(state)) {
-    ctx.state = 404;
-    ctx.body = "session expired, please retry.";
-    return;
+    ctx.state.invalid = {
+      error_description: "无效的响应: state 已过期"
+    }
+
+    delete ctx.session.state;
+    return await next();
   }
 
   if (!query.code) {
     debug("Query does not have code");
-    ctx.state = 404;
-    ctx.body = "code missing";
-    return;
+    ctx.state.invalid = {
+      error_description: "无效的响应: code 参数缺失"
+    }
+
+    return await next();
   }
 
   try {
@@ -117,6 +133,8 @@ router.get('/', async function (ctx) {
         break;
     }
   }
+}, async (ctx) => {
+  ctx.body = await render("oauth-callback.html", ctx.state);
 });
 
 module.exports = router.routes();
