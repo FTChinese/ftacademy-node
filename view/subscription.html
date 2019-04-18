@@ -4,16 +4,7 @@
 
 {% block main %}
 
-{% if env.isSandbox %}
-<div class="container pt-3 pb-3 text-danger">
-  <div class="row">
-    <h1>本页仅供开发人员测试用，普通用户请勿在本页支付订阅。在本页执行的所有订阅和支付均无效！</h1>
-    <p>需要订阅FT产品的用户请前往
-      <a href="http://www.ftacademy.cn/subscription.html" target="__blank">会员订阅</a>
-    </p>
-  </div>
-</div>
-{% endif %}
+  {% include "warning.html" %}
 
 <section class="barrier-banner">
   <div class="container pt-3 pb-3">
