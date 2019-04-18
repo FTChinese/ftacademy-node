@@ -1,6 +1,5 @@
 const {
   viper,
-  urlPrefix,
   isDev,
 } = require("./lib/config");
 const config = viper.setConfigPath(process.env.HOME)
@@ -31,9 +30,7 @@ const version = require("./server/version");
 
 const app = new Koa();
 
-const router = new Router({
-  prefix: urlPrefix,
-});
+const router = new Router();
 
 app.proxy = true;
 app.keys = [config.koa_session.ftacademy];
