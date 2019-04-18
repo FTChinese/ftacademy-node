@@ -88,3 +88,36 @@ declare interface IAPIError {
     code: string;
   }
 }
+
+declare interface IWxQRPay {
+  ftcOrderId: string;
+  listsPrice: number;
+  netPrice: number;
+  appId: string;
+  codeUrl: string;
+}
+
+declare interface IWxMobilePay {
+  ftcOrderId: string;
+  listPrice: number;
+  netPrice: number;
+  appId: string;
+  mWebUrl: string;
+}
+
+declare interface IWxBrowserPay {
+  ftcOrderId: string;
+  listPrice: number,
+  netPrice: number,
+  appId: string;
+  pkg: string;
+  signType: string;
+  signature: string;
+}
+
+declare interface IAliWebPay {
+  ftcOrderId: string;
+  listPrice: string;
+  netPrice: string;
+  payUrl: string;
+}
