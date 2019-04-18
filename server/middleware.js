@@ -42,7 +42,7 @@ exports.env = function () {
  * Suppose you want to access `/profile` without login. This middleware will redirect you want to `/login`. And then when you are accessing `/login`, this middleware will again first check if you're loggedin. Certainly your are not. It again redirect you to `/login`, check login state again and redirect you to `/login`, indefinitely.
  * @return {Function}
  */
-exports.checkSession = function checkSession() {
+exports.checkLogin = function ({redirect=true}={}) {
   return async (ctx, next) => {
 
     // Do nothing for `/favicon.ico`
@@ -59,7 +59,18 @@ exports.checkSession = function checkSession() {
 
     ctx.state.user = null;
 
+    // Remeber which product user selected.
+    if (ctx.state.product) {
+      ctx.session.product = ctx.state.product;
+    } else {
+      delete ctx.session.product;
+    }
+
     // Remember to let the following middleware to excute if users are not loggedin and you do not want to redirect away.
+    if (redirect) {
+      return ctx.redirect(sitemap.login);
+    }
+
     return await next();
   }
 }
