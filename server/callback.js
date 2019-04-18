@@ -1,7 +1,6 @@
 const Router = require('koa-router');
 const debug = require('debug')('fta:callback');
 const oauthClient = require("../lib/oauth-client");
-const UserAccount = require("../lib/account");
 const {
   sitemap,
 } = require("../lib/sitemap");
@@ -76,7 +75,7 @@ router.get('/', async function (ctx, next) {
      */
     const token = await oauthClient.requestToken(query.code);
 
-    const account = await new UserAccount(token).fetch();
+    const account = await oauthClient.fetchAccount(token);
 
     ctx.session.user = account;
 
@@ -102,6 +101,9 @@ router.get('/', async function (ctx, next) {
      */
     const body = e.response.body;
 
+    /**
+     * @todo handle api response of 404.
+     */
     switch (e.status) {
       // error.field: authorization
       // error.code: invalid_client
