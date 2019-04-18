@@ -18,7 +18,6 @@ const boot = require("./util/boot-app");
 const {
   env,
   handleErrors,
-  checkSession,
 } = require("./server/middleware");
 
 const home = require("./server/home");
@@ -54,7 +53,7 @@ router.get("/", home)
 router.use("/login", login);
 router.use("/callback", oauthCallback);
 router.use("/logout", logout);
-router.use("/subscription", checkSession(), subscription);
+router.use("/subscription", subscription);
 router.use("/__version", version);
 
 app.use(router.routes());
