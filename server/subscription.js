@@ -4,6 +4,10 @@ const QRCode = require("qrcode");
 const render = require("../util/render");
 const MobileDetect = require("mobile-detect");
 const UserAccount = require("../lib/account");
+const {
+  WxDetect,
+  wxOAuthClient,
+} = require("../lib/wx-oauth");
 
 const {
   Paywall,
@@ -123,10 +127,12 @@ router.post("/:tier/:cycle",
     }
 
     // Detect device type.
-    const md = new MobileDetect(ctx.header["user-agent"]);
+    const ua = ctx.header["user-agent"];
+    const md = new MobileDetect(ua);
     const isMobile = !!md.mobile();
 
     debug("Client app: %O", ctx.state.clientApp);
+
     const account = new UserAccount(ctx.session.user, ctx.state.clientApp);
 
     try {
@@ -145,24 +151,7 @@ router.post("/:tier/:cycle",
           break;
 
         case "wechat":
-          if (isMobile) {
-            const order = await account.wxMobileOrder(tier, cycle);
-
-            ctx.redirect(order.mWebUrl);
-
-          } else {
-            /**
-             * @type {IWxQRPay}
-             */
-            const order = await account.wxDesktopOrder(tier, cycle);
-
-            const dataUrl = await QRCode.toDataURL(order.codeUrl);
-
-            ctx.state.plan = plan;
-            ctx.state.qrData = dataUrl;
-            ctx.body = await render("wx-qr.html", ctx.state);
-          }
-
+          await handleWxPay();
           break;
 
         default:
@@ -171,6 +160,47 @@ router.post("/:tier/:cycle",
       }
     } catch (e) {
       throw e;
+    }
+
+    async function handleWxPay() {
+      if (!isMobile) {
+        /**
+         * @type {IWxQRPay}
+         */
+        const order = await account.wxDesktopOrder(tier, cycle);
+
+        const dataUrl = await QRCode.toDataURL(order.codeUrl);
+
+        ctx.state.plan = plan;
+        ctx.state.qrData = dataUrl;
+        ctx.body = await render("wx-qr.html", ctx.state);
+
+        return;
+      }
+
+      const wxDetect = new WxDetect(ua).parse();
+
+      if (!wxDetect.isWxBrowser()) {
+        const order = await account.wxMobileOrder(tier, cycle);
+
+        ctx.redirect(order.mWebUrl);
+
+        return
+      }
+
+      if (!wxDetect.isPaySupported()) {
+        ctx.body = "您的微信版本过低，不支持微信内支付。请前往FT中文网网站或者在其他浏览器中打开本页支付。";
+        return;
+      }
+
+      const state = await wxOAuthClient.generateState();
+      ctx.session.state = state;
+      ctx.session.product = {
+        tier,
+        cycle,
+      };
+
+      ctx.redirect(wxOAuthClient.buildCodeUrl(state.v));
     }
   }
 );
