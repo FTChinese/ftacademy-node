@@ -89,6 +89,19 @@ declare interface IAPIError {
   }
 }
 
+declare interface IWxApp {
+  app_id: string;
+  secret: string;
+}
+
+declare interface IWxAccess {
+  access_token: string;
+  expires_in: number;
+  refresh_token: string;
+  openid: string;
+  scope: string;
+}
+
 declare interface IWxQRPay {
   ftcOrderId: string;
   listsPrice: number;
@@ -110,9 +123,11 @@ declare interface IWxBrowserPay {
   listPrice: number,
   netPrice: number,
   appId: string;
+  timestamp: string;
+  nonce: string;
   pkg: string;
-  signType: string;
   signature: string;
+  signType: string;
 }
 
 declare interface IAliWebPay {
