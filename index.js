@@ -25,7 +25,9 @@ const subscription = require("./server/subscription");
 const login = require("./server/login");
 const oauthCallback = require("./server/callback");
 const logout = require("./server/logout");
+const wxOAuth = require("./server/wx-oauth");
 const version = require("./server/version");
+const ua = require("./server/ua");
 
 const app = new Koa();
 
@@ -54,6 +56,8 @@ router.use("/login", login);
 router.use("/callback", oauthCallback);
 router.use("/logout", logout);
 router.use("/subscription", subscription);
+router.use("/wxoauth", wxOAuth);
+router.use("/ua", ua);
 router.use("/__version", version);
 
 app.use(router.routes());
