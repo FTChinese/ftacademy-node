@@ -110,6 +110,8 @@ router.get("/callback",
       delete ctx.session.state;
 
     } catch (e) {
+      debug("%O", e);
+
       if (!isAPIError(e)) {
         ctx.state.invalid = {
           error_description: e.message,
