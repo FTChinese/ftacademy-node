@@ -42,7 +42,7 @@ router.get('/', async function (ctx, next) {
     return await next();
   }
 
-  if (query.state != state.v) {
+  if (!state || (query.state != state.v)) {
     debug("state does not match");
     ctx.state.invalid = {
       error_description: "无效的响应: state 不匹配"
