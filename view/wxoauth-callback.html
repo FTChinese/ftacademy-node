@@ -1,0 +1,52 @@
+{% extends "layout/base.html" %}
+
+{% block title %}会员订阅{% endblock %}
+
+{% block main %}
+
+<div class="container">
+  <div class="row justify-content-center mb-5 mt-5">
+    <div class="col">
+      <div class="jumbotron">
+        {{ JSON.stringify(order, null, 4) }}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% embedJs %}
+<script>
+function onBridgeReady() {
+  WeixinJSBridge.invoke("getBrandWCPayRequest", {
+    "appId": "{{ order.appId }}",
+    "timeStamp": "{{ order.timestamp }}",
+    "nonceStr": "{{ order.nonce }}",
+    "package": "{{ order.pkg }}",
+    "signType": "{{ order.signType }}",
+    "paySign": "{{ order.signature }}",
+  }, function(res) {
+    alert(res.err_msg);
+
+    if (res.err_msg == "get_brand_wcpay_request:ok") {
+
+    }
+  });
+}
+
+function initWxBrowserPay() {
+  if (typeof WeixinJSBridge == "undefined") {
+    if (document.addEventListener) {
+      document.addEventListener("WeixinJSBridgeReady", onBridgeReady, false);
+    } else if (document.attachEvent) {
+      document.attachEvent("WeixinJSBridgeReady", onBridgeReady);
+      document.attachEvent("onWeixinJSBridgeReady", onBridgeReady);
+    }
+  } else {
+    onBridgeReady();
+  }
+}
+
+initWxBrowserPay();
+</script>
+{% endblock %}
