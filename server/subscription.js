@@ -164,6 +164,7 @@ router.post("/:tier/:cycle",
 
     async function handleWxPay() {
       if (!isMobile) {
+        debug("Not mobile platform");
         /**
          * @type {IWxQRPay}
          */
@@ -180,7 +181,11 @@ router.post("/:tier/:cycle",
 
       const wxDetect = new WxDetect(ua).parse();
 
+      debug("Detetcting wx user agent: %s", wxDetect.ua);
+      debug("Browser parsed: %O", wxDetect.browser);
+
       if (!wxDetect.isWxBrowser()) {
+        debug("A plain mobile browser");
         const order = await account.wxMobileOrder(tier, cycle);
 
         ctx.redirect(order.mWebUrl);
