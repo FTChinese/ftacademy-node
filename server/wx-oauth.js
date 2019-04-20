@@ -25,6 +25,7 @@ router.get("/callback",
   clientApp(),
 
   async(ctx, next) => {
+
     /**
      * @type {code: string, state: string}
      */
