@@ -8,6 +8,9 @@ const {
   WxDetect,
   wxOAuthClient,
 } = require("../lib/wx-oauth");
+const {
+  sitemap,
+} = require("../lib/sitemap");
 
 const {
   paywall
@@ -21,21 +24,28 @@ const router = new Router();
 
 /**
  * @description Show paywall.
+ * If query parameter `from` is present, it indicates user is redirected a url.
+ * Rememeber this url and redirect user back after
+ * payment finished.
  * /subscription
  */
 router.get("/",
 
   checkLogin({redirect: false}),
 
-  async (ctx, next) => {
-    debug("Session state: %O", ctx.session.state);
+  async (ctx) => {
+    /**
+     * @type {{from?: string}}
+     */
+    const query = ctx.request.query;
+    if (query.from) {
+      ctx.session.from = query.from;
+    }
 
     const paywallData = paywall.getPaywall();
 
     ctx.state.banner = paywallData.banner;
     ctx.state.products = paywallData.products;
-
-    debug("Products: %O", ctx.state.products);
 
     ctx.body = await render("subscription.html", ctx.state);
   }
@@ -132,7 +142,10 @@ router.post("/:tier/:cycle",
       switch (payMethod) {
         // Use user-agent to decide launch desktop web pay or mobile web pay
         case "alipay":
-          // If user is using mobile browser on phone
+          /**
+           * If user is using mobile browser on phone
+           * @todo Handle redirect after payment.
+           */
           if (isMobile) {
             const aliOrder = await account.aliMobileOrder(tier, cycle);
             ctx.redirect(aliOrder.payUrl);
@@ -156,6 +169,8 @@ router.post("/:tier/:cycle",
     }
 
     async function handleWxPay() {
+      const fromUrl = ctx.session.from;
+
       if (!isMobile) {
         debug("Not mobile platform");
         /**
@@ -167,7 +182,11 @@ router.post("/:tier/:cycle",
 
         ctx.state.plan = plan;
         ctx.state.qrData = dataUrl;
+        ctx.state.redirectTo = fromUrl ? fromUrl : sitemap.subs;
+
         ctx.body = await render("wx-qr.html", ctx.state);
+
+        delete ctx.session.from;
 
         return;
       }

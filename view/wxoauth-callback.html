@@ -7,10 +7,22 @@
 <div class="container">
   <div class="row justify-content-center mb-5 mt-5">
     <div class="col">
-      <div class="jumbotron text-center">
-        <h4>购买FT中文网会员</h4>
-        <p>{{ product.tier | localize }}/{{ product.cycle | localize }}</p>
+      <div class="text-center">
+        <h4>购买 {{ product.tier | localize }}/{{ product.cycle | localize }}</h4>
         <strong class="text-danger">¥{{ order.netPrice | toCurrency }}</strong>
+        <div id="paySuccess" class="pay-result">
+          <div class="d-flex justify-content-center mt-3">
+            <img src="https://www.ft.com/__origami/service/image/v2/images/raw/fticon-v1:tick?tint=26747a&format=svg&source=ftchinese)" alt="">
+            <span>支付成功</span>
+            <a href="{{ redirectTo }}">返回</a>
+          </div>
+        </div>
+        <div id="payFailure" class="pay-result">
+          <div class="d-flex justify-content-center mt-3">
+            <img src="https://www.ft.com/__origami/service/image/v2/images/raw/fticon-v1:cross?tint=990F3D&format=svg&source=ftchinese)" alt="">
+            <span>支付失败，请返回重试</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -19,6 +31,7 @@
 
 {% block embedJs %}
 <script>
+
 function onBridgeReady() {
   WeixinJSBridge.invoke("getBrandWCPayRequest", {
     "appId": "{{ order.appId }}",
@@ -31,7 +44,15 @@ function onBridgeReady() {
     alert(res.err_msg);
 
     if (res.err_msg == "get_brand_wcpay_request:ok") {
-
+      const paySuccess = document.getElementById("paySuccess");
+      if (paySuccess) {
+        paySuccess.classList.add("show");
+      }
+    } else {
+      const payFailure = document.getElementById("payFailure");
+      if (payFailure) {
+        payFailure.classList.add("show");
+      }
     }
   });
 }
