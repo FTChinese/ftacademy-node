@@ -153,4 +153,4 @@ class Paywall {
 }
 
 exports.Promo = Promo;
-exports.Paywall = Paywall;
+exports.paywall = new Paywall();
