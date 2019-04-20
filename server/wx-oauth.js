@@ -24,11 +24,37 @@ const router = new Router();
  * /wxoauth/callback
  */
 router.get("/callback",
+  // checkLogin(),
 
   clientApp(),
 
   async(ctx, next) => {
     const fromUrl = ctx.session.from;
+
+    /**
+     * This part is only used to test UI.
+     */
+    ctx.state.product = {
+      tier: "standard",
+      cycle: "month",
+    };
+
+    ctx.state.order = {
+        "ftcOrderId": "FTF2B16619766893C1",
+        "listPrice": 258,
+        "netPrice": 258,
+        "appId": "wxa8e66ab05d5e212b",
+        "timestamp": "1555749500",
+        "nonce": "b8dd4e56359290727b16",
+        "pkg": "prepay_id=wx2016382081882383ec69c9022703105332",
+        "signature": "1F20C6C23E4805D9E3C3BB4459CFACA4",
+        "signType": "MD5"
+    };
+
+    ctx.state.redirectTo = fromUrl ? fromUrl : sitemap.subs;
+
+    ctx.body = await render("wxoauth-callback.html", ctx.state);
+    return;
 
     /**
      * @type {code: string, state: string}

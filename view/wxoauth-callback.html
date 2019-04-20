@@ -11,16 +11,16 @@
         <h4>购买 {{ product.tier | localize }}/{{ product.cycle | localize }}</h4>
         <strong class="text-danger">¥{{ order.netPrice | toCurrency }}</strong>
         <div id="paySuccess" class="pay-result">
-          <div class="d-flex justify-content-center mt-3">
-            <img src="https://www.ft.com/__origami/service/image/v2/images/raw/fticon-v1:tick?tint=26747a&format=svg&source=ftchinese)" alt="">
-            <span>支付成功</span>
+          <div class="d-flex justify-content-center align-items-center mt-3">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="#26747a" d="M760 380.4l-61.6-61.6-263.2 263.1-109.6-109.5L264 534l171.2 171.2L760 380.4z"/></svg>
+            <span class="success-text mr-2">支付成功</span>
             <a href="{{ redirectTo }}">返回</a>
           </div>
         </div>
         <div id="payFailure" class="pay-result">
-          <div class="d-flex justify-content-center mt-3">
-            <img src="https://www.ft.com/__origami/service/image/v2/images/raw/fticon-v1:cross?tint=990F3D&format=svg&source=ftchinese)" alt="">
-            <span>支付失败，请返回重试</span>
+          <div class="d-flex justify-content-center align-items-center mt-3">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="#990F3D" d="M697.4 759.2l61.8-61.8L573.8 512l185.4-185.4-61.8-61.8L512 450.2 326.6 264.8l-61.8 61.8L450.2 512 264.8 697.4l61.8 61.8L512 573.8z"/></svg>
+            <span class="failure-text">支付失败，请返回重试</span>
           </div>
         </div>
       </div>
@@ -41,7 +41,6 @@ function onBridgeReady() {
     "signType": "{{ order.signType }}",
     "paySign": "{{ order.signature }}",
   }, function(res) {
-    alert(res.err_msg);
 
     if (res.err_msg == "get_brand_wcpay_request:ok") {
       const paySuccess = document.getElementById("paySuccess");
