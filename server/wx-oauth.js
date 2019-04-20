@@ -31,9 +31,6 @@ router.get("/callback",
     const query = ctx.request.query;
     debug("OAuth code response: %O", query);
 
-    ctx.body = query;
-    return;
-
     if (!query.state) {
       debug("Query paramter does not contain state");
       ctx.state.invalid = {
@@ -93,9 +90,6 @@ router.get("/callback",
     const token = await wxOAuthClient.getAccessToken(query.code);
 
     debug("Wx oauth token: %O", token);
-
-    ctx.body = token;
-    return;
 
     const account = new UserAccount(ctx.session.user, ctx.state.clientApp);
 

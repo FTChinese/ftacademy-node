@@ -39,9 +39,17 @@ test("code", async() => {
   console.log(url);
 });
 
-test("token", () => {
-  const code = "123456";
+test("token-url", () => {
+  const code = "011IATIi1dmjnv0f56Ji19jWIi1IATIm";
   const tokenUrl = wxOAuthClient.buildTokenUrl(code);
 
   console.log(tokenUrl);
+});
+
+test("get-token", async () => {
+  const code = "001l4SvN0zJggb2cCpwN00HvvN0l4SvY";
+
+  const result = await wxOAuthClient.getAccessToken(code);
+
+  console.log(result);
 });
