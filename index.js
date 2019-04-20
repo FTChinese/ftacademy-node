@@ -1,11 +1,8 @@
 const {
-  viper,
+  Viper,
   isDev,
 } = require("./lib/config");
-const config = viper.setConfigPath(process.env.HOME)
-  .setConfigName("config/api.toml")
-  .readInConfig()
-  .getConfig();
+const config = Viper.getInstance().getConfig();
 const path = require("path");
 const Koa = require("koa");
 const Router = require("koa-router");
