@@ -31,6 +31,9 @@ router.get("/callback",
     const query = ctx.request.query;
     debug("OAuth code response: %O", query);
 
+    ctx.body = query;
+    return;
+
     if (!query.state) {
       debug("Query paramter does not contain state");
       ctx.state.invalid = {

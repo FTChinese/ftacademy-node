@@ -115,8 +115,6 @@ router.post("/:tier/:cycle",
 
     const plan = paywall.findPlan(tier, cycle);
 
-    debug("Plan: %O", plan);
-
     // If request url is not valid.
     if (!plan) {
       ctx.state = 404;
@@ -127,8 +125,6 @@ router.post("/:tier/:cycle",
     const ua = ctx.header["user-agent"];
     const md = new MobileDetect(ua);
     const isMobile = !!md.mobile();
-
-    debug("Client app: %O", ctx.state.clientApp);
 
     const account = new UserAccount(ctx.session.user, ctx.state.clientApp);
 

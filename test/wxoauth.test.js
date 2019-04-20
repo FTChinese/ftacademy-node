@@ -34,3 +34,10 @@ test("code", async() => {
 
   console.log(url);
 });
+
+test("token", () => {
+  const code = "123456";
+  const tokenUrl = wxOAuthClient.buildTokenUrl(code);
+
+  console.log(tokenUrl);
+});
