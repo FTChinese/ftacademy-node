@@ -20,9 +20,8 @@ const {
 const home = require("./server/home");
 const subscription = require("./server/subscription");
 const login = require("./server/login");
-const oauthCallback = require("./server/callback");
 const logout = require("./server/logout");
-const wxOAuth = require("./server/wx-oauth");
+const wechat = require("./server/wechat");
 const version = require("./server/version");
 const ua = require("./server/ua");
 
@@ -50,10 +49,9 @@ app.use(handleErrors());
 
 router.get("/", home)
 router.use("/login", login);
-router.use("/callback", oauthCallback);
 router.use("/logout", logout);
 router.use("/subscription", subscription);
-router.use("/wxoauth", wxOAuth);
+router.use("/wx", wechat);
 router.use("/ua", ua);
 router.use("/__version", version);
 
