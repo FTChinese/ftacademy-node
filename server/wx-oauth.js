@@ -91,12 +91,15 @@ router.get("/callback",
 
     debug("Wx oauth token: %O", token);
 
+    ctx.body = token;
+    return;
+
     const account = new UserAccount(ctx.session.user, ctx.state.clientApp);
 
     try {
       const order = await account.wxBrowserOrder({
-        tier: "",
-        cycle: "",
+        tier: product.tier,
+        cycle: product.cycle,
         openId: token.openid,
       });
 
