@@ -103,6 +103,7 @@ router.get("/callback",
 
       debug("Order for wx in-housr browser: %O", order);
 
+      ctx.state.product = product;
       ctx.state.order = order;
 
       ctx.body = await render("wxoauth-callback.html", ctx.state);
