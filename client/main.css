@@ -214,3 +214,16 @@ a:hover {
   color: #4D4845; }
 .o-footer__copyright a {
   text-decoration: underline; }
+
+.pay-result {
+    display: none;
+}
+.pay-result.show {
+    display: block;
+}
+.pay-result img {
+    height: 2em;
+}
+.pay-result span {
+    line-height: 2em;
+}
