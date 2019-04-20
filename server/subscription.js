@@ -10,7 +10,7 @@ const {
 } = require("../lib/wx-oauth");
 
 const {
-  Paywall,
+  paywall
 } = require("../model/paywall");
 const {
   clientApp,
@@ -29,8 +29,6 @@ router.get("/",
 
   async (ctx, next) => {
     debug("Session state: %O", ctx.session.state);
-
-    const paywall = Paywall.getInstance();
 
     const paywallData = paywall.getPaywall();
 
@@ -56,7 +54,6 @@ router.get("/:tier/:cycle",
     const tier = params.tier;
     const cycle = params.cycle;
 
-    const paywall = Paywall.getInstance();
     /**
      * @type {IPlan}
      */
@@ -116,7 +113,7 @@ router.post("/:tier/:cycle",
      */
     const payMethod = ctx.request.body.payMethod;
 
-    const plan = Paywall.getInstance().findPlan(tier, cycle);
+    const plan = paywall.findPlan(tier, cycle);
 
     debug("Plan: %O", plan);
 
