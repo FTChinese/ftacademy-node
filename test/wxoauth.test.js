@@ -1,14 +1,18 @@
 const wxUA = "Mozilla/5.0(iphone;CPU iphone OS 5_1_1 like Mac OS X) AppleWebKit/534.46(KHTML,like Geocko) Mobile/9B206 MicroMessenger/5.0";
+process.env.NODE_ENV = "sandbox"
+process.env.URL_PREFIX = "/sandbox";
+
 const {
   Viper,
 } = require("../lib/config");
 
-const viper = Viper.getInstance();
+Viper.getInstance();
 
 const {
   WxDetect,
   wxOAuthClient,
 } = require("../lib/wx-oauth");
+
 
 test("parse", () => {
   const found = /(MicroMessenger)\/([0-9]+)\.([0-9]+)/i.exec(ua);
