@@ -10,6 +10,9 @@ const {
   isAPIError,
 } = require("../lib/response");
 const {
+  sitemap,
+} = require("../lib/sitemap");
+const {
   clientApp,
   checkLogin,
 } = require("./middleware");
@@ -25,6 +28,7 @@ router.get("/callback",
   clientApp(),
 
   async(ctx, next) => {
+    const fromUrl = ctx.session.from;
 
     /**
      * @type {code: string, state: string}
@@ -105,11 +109,13 @@ router.get("/callback",
 
       ctx.state.product = product;
       ctx.state.order = order;
+      ctx.state.redirectTo = fromUrl ? fromUrl : sitemap.subs;
 
       ctx.body = await render("wxoauth-callback.html", ctx.state);
 
       delete ctx.session.product;
       delete ctx.session.state;
+      delete ctx.session.from;
 
     } catch (e) {
       debug("%O", e);
