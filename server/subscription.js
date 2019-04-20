@@ -9,7 +9,7 @@ const {
   wxOAuthClient,
 } = require("../lib/wx-oauth");
 const {
-  sitemap,
+  nextUser,
 } = require("../lib/sitemap");
 
 const {
@@ -182,7 +182,7 @@ router.post("/:tier/:cycle",
 
         ctx.state.plan = plan;
         ctx.state.qrData = dataUrl;
-        ctx.state.redirectTo = fromUrl ? fromUrl : sitemap.subs;
+        ctx.state.redirectTo = fromUrl ? fromUrl : nextUser.subs;
 
         ctx.body = await render("wx-qr.html", ctx.state);
 
