@@ -1,4 +1,8 @@
 const debug = require("debug")("fta:wx-oauth");
+const {
+  URL,
+  URLSearchParams,
+} = require("url");
 const Router = require("koa-router");
 const render = require("../util/render");
 const {
@@ -17,6 +21,31 @@ const {
 } = require("./middleware");
 
 const router = new Router();
+
+/**
+ * @description Transfer authrozaition code response.
+ * /wx/oauth2/connecting
+ */
+router.get("/oauth2/connecting", async(ctx, next) => {
+  /**
+   * @type {{code: string, state: string}}
+   */
+  const query = ctx.request.query;
+  if (!query.state) {
+    ctx.status = 404;
+    return
+  }
+
+  if (!query.code) {
+    ctx.redirect(`${nextUser.wxCallback}?error=access_denied`);
+    return;
+  }
+
+  const params = new URLSearchParams();
+  params.set("code", query.code);
+  params.set("state", query.state);
+  ctx.redirect(`${nextuser.wxCallback}?${params.toString()}`);
+});
 
 /**
  * @description Wechat oauth callback
