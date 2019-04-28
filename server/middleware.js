@@ -10,7 +10,7 @@ const {
 const {
   sitemap,
 } = require("../lib/sitemap");
-
+const Account = require("../lib/account");
 const {
   isAPIError,
 } = require("../lib/response");
@@ -42,7 +42,7 @@ exports.env = function () {
  * Suppose you want to access `/profile` without login. This middleware will redirect you want to `/login`. And then when you are accessing `/login`, this middleware will again first check if you're loggedin. Certainly your are not. It again redirect you to `/login`, check login state again and redirect you to `/login`, indefinitely.
  * @return {Function}
  */
-exports.checkLogin = function ({redirect=true}={}) {
+exports.checkSession = function ({redirect=true}={}) {
   return async (ctx, next) => {
 
     // Do nothing for `/favicon.ico`
@@ -50,9 +50,10 @@ exports.checkLogin = function ({redirect=true}={}) {
 
     if (isLoggedIn(ctx)) {
       /**
-       * @type {UserSession}
+       * @type {IAccount}
        */
-      ctx.state.user = ctx.session.user;
+      const acntData = ctx.session.user;
+      ctx.state.user = new Account(acntData);
 
       return await next();
     }

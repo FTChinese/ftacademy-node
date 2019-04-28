@@ -17,21 +17,21 @@ const {
 } = require("../model/paywall");
 const {
   clientApp,
-  checkLogin,
+  checkSession,
 } = require("./middleware");
 
 const router = new Router();
 
 /**
  * @description Show paywall.
- * If query parameter `from` is present, it indicates user is redirected a url.
+ * If query parameter `from` is present, it indicates user is redirected from a url.
  * Rememeber this url and redirect user back after
  * payment finished.
  * /subscription
  */
 router.get("/",
 
-  checkLogin({redirect: false}),
+  checkSession({redirect: false}),
 
   async (ctx) => {
     /**
@@ -83,7 +83,7 @@ router.get("/:tier/:cycle",
     return await next();
   },
 
-  checkLogin(),
+  checkSession(),
 
   async (ctx) => {
 
@@ -105,7 +105,7 @@ router.get("/:tier/:cycle",
  */
 router.post("/:tier/:cycle",
 
-  checkLogin(),
+  checkSession(),
 
   clientApp(),
 
@@ -182,6 +182,7 @@ router.post("/:tier/:cycle",
 
         ctx.state.plan = plan;
         ctx.state.qrData = dataUrl;
+        // Show redirect URL below qr code.
         ctx.state.redirectTo = fromUrl ? fromUrl : nextUser.subs;
 
         ctx.body = await render("wx-qr.html", ctx.state);
