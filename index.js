@@ -19,6 +19,7 @@ const {
 
 const home = require("./server/home");
 const subscription = require("./server/subscription");
+const alipay = require("./server/alipay");
 const login = require("./server/login");
 const logout = require("./server/logout");
 const wechat = require("./server/wechat");
@@ -51,6 +52,7 @@ router.get("/", home)
 router.use("/login", login);
 router.use("/logout", logout);
 router.use("/subscription", subscription);
+router.use("/alipay", alipay);
 router.use("/wx", wechat);
 router.use("/ua", ua);
 router.use("/__version", version);
