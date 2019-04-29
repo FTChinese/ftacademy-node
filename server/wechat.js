@@ -8,7 +8,7 @@ const render = require("../util/render");
 const {
   wxOAuthClient,
 } = require("../lib/wx-oauth");
-const UserAccount = require("../lib/account");
+const Account = require("../lib/account");
 const {
   isAPIError,
 } = require("../lib/response");
@@ -17,42 +17,17 @@ const {
 } = require("../lib/sitemap");
 const {
   clientApp,
-  checkLogin,
+  checkSession,
 } = require("./middleware");
 
 const router = new Router();
 
 /**
- * @description Transfer authrozaition code response.
- * /wx/oauth2/connecting
- */
-router.get("/oauth2/connecting", async(ctx, next) => {
-  /**
-   * @type {{code: string, state: string}}
-   */
-  const query = ctx.request.query;
-  if (!query.state) {
-    ctx.status = 404;
-    return
-  }
-
-  if (!query.code) {
-    ctx.redirect(`${nextUser.wxCallback}?error=access_denied`);
-    return;
-  }
-
-  const params = new URLSearchParams();
-  params.set("code", query.code);
-  params.set("state", query.state);
-  ctx.redirect(`${nextuser.wxCallback}?${params.toString()}`);
-});
-
-/**
- * @description Wechat oauth callback
+ * @description Wechat oauth callback for scope=snsapi_base
  * /wx/oauth2/callback
  */
 router.get("/oauth2/callback",
-  // checkLogin(),
+  checkSession(),
 
   clientApp(),
 
@@ -90,6 +65,7 @@ router.get("/oauth2/callback",
     const query = ctx.request.query;
     debug("OAuth code response: %O", query);
 
+    // Validate OAuth 2 code response.
     if (!query.state) {
       debug("Query paramter does not contain state");
       ctx.state.invalid = {
@@ -131,13 +107,14 @@ router.get("/oauth2/callback",
       return await next();
     }
 
-    /**
-     * @type {{tier: "standard" | "premium", cycle: "year" | "month" }}
-     */
     const product = ctx.session.product;
-    debug("Product: %O", product);
 
-    if (!product) {
+    /**
+     * @type {ISubsOrder}
+     */
+    const subs = ctx.session.subs;
+
+    if (!subs) {
       ctx.status = 404;
       ctx.body = "Unknow product";
       ctx.state.invalid = {
@@ -146,30 +123,37 @@ router.get("/oauth2/callback",
       return await next();
     }
 
+    // Use code to change for access token.
     const token = await wxOAuthClient.getAccessToken(query.code);
 
     debug("Wx oauth token: %O", token);
 
-    const account = new UserAccount(ctx.session.user, ctx.state.clientApp);
+    /**
+     * @type {Account}
+     */
+    const account = ctx.session.user;
 
     try {
-      const order = await account.wxBrowserOrder({
-        tier: product.tier,
-        cycle: product.cycle,
-        openId: token.openid,
-      });
+      const order = await account
+        .setClient(ctx.state.clientApp)
+        .wxBrowserOrder({
+          tier: subs.tier,
+          cycle: subs.cycle,
+          openId: token.openid,
+        });
 
-      debug("Order for wx in-housr browser: %O", order);
+      debug("Order for wx browser: %O", order);
 
-      ctx.state.product = product;
-      ctx.state.order = order;
-      ctx.state.redirectTo = fromUrl ? fromUrl : nextUser.subs;
+      subs.orderId = order.ftcOrderId;
+      subs.listPrice = order.listPrice;
+      subs.netPrice = order.netPrice;
+      subs.appId = order.appId;
+
+      ctx.state.subs = subs;
 
       ctx.body = await render("wxoauth-callback.html", ctx.state);
 
-      delete ctx.session.product;
       delete ctx.session.state;
-      delete ctx.session.from;
 
     } catch (e) {
       debug("%O", e);
@@ -195,7 +179,6 @@ router.get("/oauth2/callback",
   async (ctx) => {
     ctx.body = await render("oauth-callback.html", ctx.state);
 
-    delete ctx.session.product;
     delete ctx.session.state;
   }
 );

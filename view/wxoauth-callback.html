@@ -4,17 +4,16 @@
 
 {% block main %}
 
-<div class="container">
   <div class="row justify-content-center mb-5 mt-5">
     <div class="col">
       <div class="text-center">
-        <h4>购买 {{ product.tier | localize }}/{{ product.cycle | localize }}</h4>
-        <strong class="text-danger">¥{{ order.netPrice | toCurrency }}</strong>
+        <h4>购买 {{ subs.tier | localize }}/{{ subs.cycle | localize }}</h4>
+        <strong class="text-danger">¥{{ subs.netPrice | toCurrency }}</strong>
         <div id="paySuccess" class="pay-result">
           <div class="d-flex justify-content-center align-items-center mt-3">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="#26747a" d="M760 380.4l-61.6-61.6-263.2 263.1-109.6-109.5L264 534l171.2 171.2L760 380.4z"/></svg>
             <span class="success-text mr-2">支付成功</span>
-            <a href="{{ redirectTo }}">返回</a>
+            <a href="{{ sitemap.wxpayDone }}">完成</a>
           </div>
         </div>
         <div id="payFailure" class="pay-result">
@@ -26,7 +25,6 @@
       </div>
     </div>
   </div>
-</div>
 {% endblock %}
 
 {% block embedJs %}
