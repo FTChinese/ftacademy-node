@@ -89,6 +89,29 @@ declare interface IAPIError {
   }
 }
 
+declare interface IConfig {
+  wxapp: {
+    m_ftc: IWxApp;
+    o_ftcsupport: IWxAccess;
+  };
+  oauth_client: {
+    fta_dev: IFtcClient;
+    fta_sandbox: IFtcClient;
+    fta_prod: IFtcClient;
+  };
+  koa_session: {
+    superyard: string;
+    next_user: string;
+    ftacacemy: string;
+  };
+}
+
+// FTC OAuth2 client.
+declare interface IFtcClient {
+  client_id: string;
+  client_secret: string;
+}
+
 declare interface IWxApp {
   app_id: string;
   secret: string;
