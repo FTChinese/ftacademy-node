@@ -89,7 +89,7 @@ router.get("/wx/done",
 
     try {
       if (subsOrder) {
-        const payResult = await account.wxOrderQuery(subsOrder.orderId);
+        const payResult = await account.wxOrderQuery(subsOrder);
 
         ctx.state.result = payResult;
       }
