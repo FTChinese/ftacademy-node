@@ -9,6 +9,7 @@ const {
 } = require("../model/footer");
 const {
   sitemap,
+  nextUser,
 } = require("../lib/sitemap");
 const Account = require("../lib/account");
 const {
@@ -29,6 +30,7 @@ exports.env = function () {
     };
 
     ctx.state.sitemap = sitemap;
+    ctx.state.nextUser = nextUser;
 
     await next();
   }
