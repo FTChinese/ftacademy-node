@@ -146,6 +146,7 @@ router.get("/oauth2/callback",
       subs.appId = order.appId;
 
       ctx.state.subs = subs;
+      ctx.state.order = order;
 
       ctx.body = await render("wxoauth-callback.html", ctx.state);
 

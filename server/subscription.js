@@ -287,6 +287,8 @@ router.post("/:tier/:cycle",
 
       // Go through the wechat OAuth workflow to
       // to obtain user's open id.
+      // After obating open id, the payment is handle
+      // in server/wechat.js's /oauth2/callback
       ctx.redirect(wxOAuthClient.buildCodeUrl(state.v));
     }
   }
