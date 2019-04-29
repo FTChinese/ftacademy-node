@@ -42,6 +42,7 @@ router.get("/",
      */
     const query = ctx.request.query;
     if (query.from) {
+      debug("Accessed from %s", quer.from);
       ctx.session.from = query.from;
     }
 
