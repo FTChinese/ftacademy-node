@@ -1,5 +1,8 @@
 const debug = require("debug")("fta:subs");
 const Router = require("koa-router");
+const {
+  URL,
+} = require("url");
 const QRCode = require("qrcode");
 const render = require("../util/render");
 const MobileDetect = require("mobile-detect");
@@ -10,6 +13,8 @@ const {
 } = require("../lib/wx-oauth");
 const {
   nextUser,
+  sitemap,
+  ftaExternal,
 } = require("../lib/sitemap");
 
 const {
@@ -148,10 +153,30 @@ router.post("/:tier/:cycle",
            */
           if (isMobile) {
             const aliOrder = await account.aliMobileOrder(tier, cycle);
+
+            ctx.session.subs = {
+              orderId: aliOrder.ftcOrderId,
+              tier,
+              cycle,
+              listPrice: aliOrder.listPrice,
+              netPrice: aliOrder.netPrice,
+              payMethod: "alipay",
+            };
+
             ctx.redirect(aliOrder.payUrl);
           } else {
             // Otherwise treat user on desktop
             const aliOrder = await account.aliDesktopOrder(tier, cycle);
+
+            ctx.session.subs = {
+              orderId: aliOrder.ftcOrderId,
+              tier,
+              cycle,
+              listPrice: aliOrder.listPrice,
+              netPrice: aliOrder.netPrice,
+              payMethod: "alipay",
+            };
+
             ctx.redirect(aliOrder.payUrl);
           }
           break;
@@ -169,7 +194,6 @@ router.post("/:tier/:cycle",
     }
 
     async function handleWxPay() {
-      const fromUrl = ctx.session.from;
 
       if (!isMobile) {
         debug("Not mobile platform");
@@ -182,12 +206,19 @@ router.post("/:tier/:cycle",
 
         ctx.state.plan = plan;
         ctx.state.qrData = dataUrl;
-        // Show redirect URL below qr code.
-        ctx.state.redirectTo = fromUrl ? fromUrl : nextUser.subs;
+
+        // Store order to session for later query.
+        ctx.session.subs = {
+          orderId: order.ftcOrderId,
+          tier,
+          cycle,
+          listPrice: order.listPrice,
+          netPrice: order.netPrice,
+          appId: order.appId,
+          payMethod: "wechat",
+        }
 
         ctx.body = await render("wx-qr.html", ctx.state);
-
-        delete ctx.session.from;
 
         return;
       }
@@ -201,7 +232,26 @@ router.post("/:tier/:cycle",
         debug("A plain mobile browser");
         const order = await account.wxMobileOrder(tier, cycle);
 
-        ctx.redirect(order.mWebUrl);
+        // Store session.
+        ctx.session.subs = {
+          orderId: order.ftcOrderId,
+          tier,
+          cycle,
+          listPrice: order.listPrice,
+          netPrice: order.netPrice,
+          appId: order.appId,
+          payMethod: "wechat",
+        }
+
+        const redirectUrl = new URL(order.mWebUrl);
+        const params = redirectUrl.searchParams;
+        params.set("redirect_url", ftaExternal.wxpayRedirectUrl);
+
+        redirectUrl.search = params.toString();
+
+        debug("Wechat mobile browser redirect to: %s", redirectUrl.href);
+
+        ctx.redirect(redirectUrl.href);
 
         return
       }
@@ -218,6 +268,17 @@ router.post("/:tier/:cycle",
         cycle,
       };
 
+      // After OAuth redirect, which product user
+      // selected will not be known unless we save
+      // it somewhere.
+      ctx.session.subs = {
+        tier,
+        cycle,
+        payMethod: "wechat",
+      }
+
+      // Go through the wechat OAuth workflow to
+      // to obtain user's open id.
       ctx.redirect(wxOAuthClient.buildCodeUrl(state.v));
     }
   }
