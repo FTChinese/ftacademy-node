@@ -102,6 +102,16 @@ declare interface IWxAccess {
   scope: string;
 }
 
+declare interface ISubsOrder {
+  orderId: string;
+  tier: string;
+  cycle: string;
+  listPrice: number;
+  netPrice: number;
+  appId?: string; // wx app id.
+  payMethod: "alipay" | "wechat";
+}
+
 declare interface IWxQRPay {
   ftcOrderId: string;
   listsPrice: number;
@@ -128,6 +138,15 @@ declare interface IWxBrowserPay {
   pkg: string;
   signature: string;
   signType: string;
+}
+
+declare interface IWxQuery {
+  paymentState: string;
+  paymentStateDesc: string;
+  totalFee: number;
+  transactionId: string;
+  ftcOrderId: string;
+  paidAt: string;
 }
 
 declare interface IAliWebPay {
