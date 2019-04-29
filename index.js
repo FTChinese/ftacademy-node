@@ -19,7 +19,7 @@ const {
 
 const home = require("./server/home");
 const subscription = require("./server/subscription");
-const alipay = require("./server/alipay");
+const payResult = require("./server/pay-result");
 const login = require("./server/login");
 const logout = require("./server/logout");
 const wechat = require("./server/wechat");
@@ -38,7 +38,7 @@ app.use(logger());
 if (isDev) {
   const static = require("koa-static");
   app.use(static(path.resolve(process.cwd(), "node_modules")));
-  app.use(static(path.resolve(process.cwd(), "client")));
+  app.use(static(path.resolve(process.cwd(), "build/dev")));
 }
 
 app.use(session({
@@ -52,7 +52,7 @@ router.get("/", home)
 router.use("/login", login);
 router.use("/logout", logout);
 router.use("/subscription", subscription);
-router.use("/alipay", alipay);
+router.use("/pay", payResult);
 router.use("/wx", wechat);
 router.use("/ua", ua);
 router.use("/__version", version);
