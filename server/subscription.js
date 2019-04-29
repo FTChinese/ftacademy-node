@@ -12,8 +12,6 @@ const {
   wxOAuthClient,
 } = require("../lib/wx-oauth");
 const {
-  nextUser,
-  sitemap,
   ftaExternal,
 } = require("../lib/sitemap");
 
@@ -80,6 +78,11 @@ router.get("/:tier/:cycle",
     }
 
     ctx.state.plan = plan;
+
+    // If user is not logged in, redirect user to go
+    // through OAuth 2 workflow. After user authenticated,
+    // ctx.session.product is used to redirect user to payment page;
+    // if this ctx.session.product is not set, user will be go back to this page again.
     ctx.state.product = {
       tier,
       cycle,
