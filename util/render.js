@@ -38,4 +38,12 @@ env.addFilter("localize", function(key) {
   return key;
 });
 
+env.addFilter("formatWxPrice", function(price) {
+  if (typeof price !== "number") {
+    return price;
+  }
+
+  return price / 100;
+});
+
 module.exports = util.promisify(nunjucks.render);
