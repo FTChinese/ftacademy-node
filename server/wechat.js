@@ -35,7 +35,7 @@ router.get("/oauth2/callback",
     /**
      * This part is only used to test UI.
      */
-    // ctx.state.product = {
+    // ctx.state.subs = {
     //   tier: "standard",
     //   cycle: "month",
     // };
@@ -51,8 +51,6 @@ router.get("/oauth2/callback",
     //     "signature": "1F20C6C23E4805D9E3C3BB4459CFACA4",
     //     "signType": "MD5"
     // };
-
-    // ctx.state.redirectTo = fromUrl ? fromUrl : sitemap.subs;
 
     // ctx.body = await render("wxoauth-callback.html", ctx.state);
     // return;
