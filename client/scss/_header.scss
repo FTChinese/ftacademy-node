@@ -2,14 +2,13 @@
   background-color: $color-paper;
   color: $color-black80;
   border-bottom: 1px solid $color-black20;
-}
 
-.navbar-brand,
-.dropdown-toggle {
-  color: $color-black80;
+  a {
+    color: $color-black80;
 
-  &:hover {
-    color: $color-black70;
+    &:hover {
+        color: $color-black70;
+    }
   }
 }
 
