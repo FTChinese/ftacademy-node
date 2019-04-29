@@ -32,8 +32,6 @@ router.get("/oauth2/callback",
   clientApp(),
 
   async(ctx, next) => {
-    const fromUrl = ctx.session.from;
-
     /**
      * This part is only used to test UI.
      */
@@ -107,8 +105,6 @@ router.get("/oauth2/callback",
       return await next();
     }
 
-    const product = ctx.session.product;
-
     /**
      * @type {ISubsOrder}
      */
@@ -131,7 +127,7 @@ router.get("/oauth2/callback",
     /**
      * @type {Account}
      */
-    const account = ctx.session.user;
+    const account = ctx.state.user;
 
     try {
       const order = await account

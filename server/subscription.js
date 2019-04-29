@@ -6,7 +6,7 @@ const {
 const QRCode = require("qrcode");
 const render = require("../util/render");
 const MobileDetect = require("mobile-detect");
-const UserAccount = require("../lib/account");
+const Account = require("../lib/account");
 const {
   WxDetect,
   wxOAuthClient,
@@ -145,7 +145,11 @@ router.post("/:tier/:cycle",
     const md = new MobileDetect(ua);
     const isMobile = !!md.mobile();
 
-    const account = new UserAccount(ctx.session.user, ctx.state.clientApp);
+    /**
+     * @type {Account}
+     */
+    const account = ctx.state.user;
+    account.setClient(ctx.state.clientApp);
 
     try {
       switch (payMethod) {
