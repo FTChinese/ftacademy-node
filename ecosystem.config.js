@@ -70,7 +70,7 @@ module.exports = {
       path: "/home/node/next/ftacademy",
       "pre-setup": "node -v",
       "post-setup": "ls -la",
-      "post-deploy": "npm install --production && pm2 startOrRestart ecosystem.config.js --env sandbox"
+      "post-deploy": "npm install --production && git stash && pm2 startOrRestart ecosystem.config.js --env sandbox"
     }
   }
 }
