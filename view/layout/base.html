@@ -14,10 +14,10 @@
   <title>{% block title %}FT商学院{% endblock %} - FT中文网</title>
   {% if env.isOnline %}
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-    <style>{% include "main.css" %}</style>
+    {% include "assets/style.html" %}
   {% else %}
     <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.css">
-    <link rel="stylesheet" href="/main.css">
+    <link rel="stylesheet" href="/style/main.css">
   {% endif %}
 
 </head>
@@ -35,11 +35,10 @@
             role="button"
             data-toggle="dropdown"
             aria-haspopup="true"
-            aria-expanded="false">myFT</a>
+            aria-expanded="false">设置</a>
+
           <div class="dropdown-menu dropdown-menu-right">
-            <h6 class="dropdown-header">{{ user.getDisplayName() }}</h6>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" target="__blank" href="{{sitemap.profile}}">设置</a>
+            <a class="dropdown-item" target="__blank" href="{{sitemap.profile}}">{{ user.getDisplayName() }}</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="{{sitemap.logout}}">退出</a>
           </div>
@@ -55,52 +54,62 @@
     </div>
   </header>
 
-  <main id="site-content" role="main">
+  {% block banner %}{% endblock %}
+
+  <main class="page-content" role="main">
+    <div class="container">
       {% block main %}{% endblock %}
+    </div>
   </main>
 
   <footer class="o-footer o-footer--theme-dark">
     <div class="container">
-      <div class="o-footer__row">
-        <ul class="o-footer__link-items">
+      <ul class="o-footer__link-items">
 
-          <li class="o-footer__link-item"><a class="o-footer__link" href="http://www.ftchinese.com/m/corp/aboutus.html" target="_blank">关于我们</a></li>
+        <li class="o-footer__link-item"><a class="o-footer__link" href="http://www.ftchinese.com/m/corp/aboutus.html" target="_blank">关于我们</a></li>
 
-          <li class="o-footer__link-item"><a class="o-footer__link" href="https://ft.wd3.myworkdayjobs.com/FT_Chinese_External_Careers" target="_blank">加入我们</a></li>
+        <li class="o-footer__link-item"><a class="o-footer__link" href="https://ft.wd3.myworkdayjobs.com/FT_Chinese_External_Careers" target="_blank">加入我们</a></li>
 
-          <li class="o-footer__link-item"><a class="o-footer__link" href="http://www.ftchinese.com/m/corp/faq.html" target="_blank">问题回馈</a></li>
+        <li class="o-footer__link-item"><a class="o-footer__link" href="http://www.ftchinese.com/m/corp/faq.html" target="_blank">问题回馈</a></li>
 
-          <li class="o-footer__link-item"><a class="o-footer__link" href="http://www.ftchinese.com/m/corp/contact.html" target="_blank">联系方式</a></li>
+        <li class="o-footer__link-item"><a class="o-footer__link" href="http://www.ftchinese.com/m/corp/contact.html" target="_blank">联系方式</a></li>
 
-          <li class="o-footer__link-item"><a class="o-footer__link" href="http://www.ftchinese.com/m/corp/partner.html" target="_blank">合作伙伴</a></li>
+        <li class="o-footer__link-item"><a class="o-footer__link" href="http://www.ftchinese.com/m/corp/partner.html" target="_blank">合作伙伴</a></li>
 
-          <li class="o-footer__link-item"><a class="o-footer__link" href="http://www.ftchinese.com/m/corp/service.html" target="_blank">服务条款</a></li>
+        <li class="o-footer__link-item"><a class="o-footer__link" href="http://www.ftchinese.com/m/corp/service.html" target="_blank">服务条款</a></li>
 
-          <li class="o-footer__link-item"><a class="o-footer__link" href="http://www.ftchinese.com/m/corp/sales.html" target="_blank">广告业务</a></li>
+        <li class="o-footer__link-item"><a class="o-footer__link" href="http://www.ftchinese.com/m/corp/sales.html" target="_blank">广告业务</a></li>
 
-          <li class="o-footer__link-item"><a class="o-footer__link" href="http://www.ftchinese.com/m/corp/copyright.html" target="_blank">版权声明</a></li>
+        <li class="o-footer__link-item"><a class="o-footer__link" href="http://www.ftchinese.com/m/corp/copyright.html" target="_blank">版权声明</a></li>
 
-          <li class="o-footer__link-item"><a class="o-footer__link" href="http://www.ftchinese.com/m/marketing/ftc.html" target="_blank">最新动态</a></li>
+        <li class="o-footer__link-item"><a class="o-footer__link" href="http://www.ftchinese.com/m/marketing/ftc.html" target="_blank">最新动态</a></li>
 
-        </ul>
+      </ul>
 
-      </div>
-
-      <div class="o-footer__copyright">
+      <div class="o-footer__copyright pb-3">
         <small>
           © FT中文网 {{env.year}}.
           <abbr title="Financial Times" aria-label="F T">FT</abbr> and ‘Financial Times’ are trademarks of The Financial Times Ltd.
         </small>
       </div>
 
-      <p class="text-muted">版本: {{ env.version }}</p>
+      <div class="text-muted pb-3">版本: {{ env.version }}</div>
+
     </div>
   </footer>
 
+  <div class="global-spinner">
+    <div class="spinner-border" role="status" aria-hidden="true">
+      <span class="sr-only">加载中...</span>
+    </div>
+  </div>
+
   {% if env.isOnline %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap.native/2.0.23/bootstrap-native-v4.min.js"></script>
+    {% include "assets/script.html" %}
   {% else %}
     <script src="/bootstrap.native/dist/bootstrap-native-v4.js"></script>
+    <script src="/script/main.js"></script>
   {% endif %}
 
   {% block embedJs %}{% endblock %}

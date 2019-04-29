@@ -1,7 +1,7 @@
 {% extends "layout/base.html" %}
 
 {% block main %}
-<div class="container">
+
   <div class="jumbotron">
     {% if apiError %}
       <h1>API Error {{status}}</h1>
@@ -16,6 +16,5 @@
       {% endif %}
     {% endif %}
   </div>
-</div>
 
 {% endblock %}

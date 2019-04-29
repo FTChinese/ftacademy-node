@@ -2,38 +2,39 @@
 
 {% block title %}会员订阅{% endblock %}
 
-{% block main %}
+{% block banner %}
 
   {% include "warning.html" %}
 
-<section class="barrier-banner">
-  <div class="container pt-3 pb-3">
-
-    <div class="row flex-row-reverse">
-      <div class="col-sm-4">
-        <img class="barrier-cover" src="{{banner.coverUrl}}" alt="">
-      </div>
-      <div class="col-sm-8">
-        <div class="pt-3 pb-3">
-          <h1 class="barrier-heading">{{banner.heading}}</h1>
-          <h2 class="barrier-heading">{{banner.subHeading}}</h2>
+  <section class="barrier-banner">
+    <div class="container pt-3 pb-3">
+      <div class="row flex-row-reverse">
+        <div class="col-sm-4">
+          <img class="barrier-cover" src="{{banner.coverUrl}}" alt="">
         </div>
-        <div class="barrier-content">
-          {% for p in banner.content %}
-          <p>{{p}}</p>
-          {% endfor %}
+        <div class="col-sm-8">
+          <div class="pt-3 pb-3">
+            <h1 class="barrier-heading">{{banner.heading}}</h1>
+            <h2 class="barrier-heading">{{banner.subHeading}}</h2>
+          </div>
+          <div class="barrier-content">
+            {% for p in banner.content %}
+            <p>{{p}}</p>
+            {% endfor %}
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
+{% endblock %}
 
-<div class="container">
+{% block main %}
   <div class="row">
     <div class="col-12 pt-5 pb-3">
         <h2 class="text-center">请选择您的订阅方式</h2>
     </div>
   </div>
+
   <div class="row justify-content-around o-card-group">
     {% for product in products %}
       <div class="col-lg-5 mb-3">
@@ -74,7 +75,6 @@
         </div>
       </div>
     {% endfor %}
-  </div>
-</div>
 
+  </div>
 {% endblock %}
