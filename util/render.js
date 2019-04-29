@@ -14,8 +14,7 @@ const localized = {
 
 const env = nunjucks.configure(
   [
-    path.resolve(__dirname, "../view"),
-    path.resolve(__dirname, "../client")
+    path.resolve(__dirname, "../view")
   ],
   {
     noCache: process.env.NODE_ENV === "development",
