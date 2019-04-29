@@ -1,6 +1,6 @@
 {
   "name": "@ftchinese/ftacademy-node",
-  "version": "0.2.27",
+  "version": "0.2.28",
   "description": "FTAcademy rewrite in node.js",
   "main": "index.js",
   "scripts": {
