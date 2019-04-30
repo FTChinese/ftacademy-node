@@ -1,0 +1,38 @@
+{% extends "layout/base.html" %}
+
+{% block title %}会员订阅{% endblock %}
+
+{% block banner %}
+  {% include "partials/warning.html" %}
+{% endblock %}
+
+{# Layout used to render select-pay-method, wechat pay in desktop browser, mobile browser, and embeded browser#}
+
+{% block main %}
+<div class="row justify-content-center">
+  <div class="col-sm-6">
+
+    <div class="card mt-4">
+      <div class="card-header">订阅FT会员</div>
+      <div class="list-group list-group-flush">
+        <li class="list-group-item d-flex justify-content-between">
+          <span>会员类型:</span>
+          <span>{{ plan.tier | localize }}/{{ plan.cycle | localize }}</span>
+        </li>
+
+        <li class="list-group-item d-flex justify-content-between">
+          <span>支付金额:</span>
+          <span class="text-danger">¥{{ plan.netPrice | toCurrency }}</span>
+        </li>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-sm-6">
+    {% block content %}{% endblock %}
+  </div>
+</div>
+{% endblock %}
