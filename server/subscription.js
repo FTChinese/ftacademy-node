@@ -102,7 +102,7 @@ router.get("/:tier/:cycle",
       };
     }
 
-    ctx.body = await render("payment.html", ctx.state);
+    ctx.body = await render("pay-method.html", ctx.state);
 
     delete ctx.session.noPayMethod;
   }
@@ -203,6 +203,9 @@ router.post("/:tier/:cycle",
 
     async function handleWxPay() {
 
+      /**
+       * Wechat pay in desktop browser
+       */
       if (!isMobile) {
         debug("Not mobile platform");
         /**
@@ -210,21 +213,26 @@ router.post("/:tier/:cycle",
          */
         const order = await account.wxDesktopOrder(tier, cycle);
 
-        const dataUrl = await QRCode.toDataURL(order.codeUrl);
-
-        ctx.state.plan = plan;
-        ctx.state.qrData = dataUrl;
-
-        // Store order to session for later query.
-        ctx.session.subs = {
-          orderId: order.ftcOrderId,
+        /**
+         * @type {ISubsOrder}
+         */
+        const subsOrder = {
           tier,
           cycle,
           listPrice: order.listPrice,
           netPrice: order.netPrice,
+          orderId: order.ftcOrderId,
           appId: order.appId,
           payMethod: "wechat",
-        }
+        };
+
+        const dataUrl = await QRCode.toDataURL(order.codeUrl);
+
+        ctx.state.plan = subsOrder;
+        ctx.state.qrData = dataUrl;
+
+        // Store order to session for later query.
+        ctx.session.subs = subsOrder;
 
         ctx.body = await render("wx-qr.html", ctx.state);
 
@@ -235,23 +243,41 @@ router.post("/:tier/:cycle",
 
       debug("Is wx browser: %O", wxDetect.browser);
 
+      /**
+       * Wechat pay in mobile browser.
+       */
       if (!wxDetect.isWxBrowser()) {
         debug("A plain mobile browser");
+
         const order = await account.wxMobileOrder(tier, cycle);
 
-        // Store session.
-        ctx.session.subs = {
-          orderId: order.ftcOrderId,
+        /**
+         * @type {ISubsOrder}
+         */
+        const subsOrder = {
           tier,
           cycle,
           listPrice: order.listPrice,
           netPrice: order.netPrice,
+          orderId: order.ftcOrderId,
           appId: order.appId,
           payMethod: "wechat",
         }
 
+        debug("Subs order for session: %O", subsOrder);
+
+        // Store order data to session so that it could be used by /pay/wx/mobile and /pay/wx/done.
+        ctx.session.subs = subsOrder;
+
         const redirectUrl = new URL(order.mWebUrl);
         const params = redirectUrl.searchParams;
+        /**
+         * NOTE how the redirect_url is used by wechat:
+         * The moment you redirect user to this page,
+         * wechat will redirect back the the `redirect_url`, even before Wechat app is called.
+         * The `redirect_url` should not be /pay/wx/done since the moment the page loads, it will start querying order while the user might not pay yet.
+         * The `redirect_url` should be one similar to showing QR code, presenting a link to let user to click after payment finished.
+         */
         params.set("redirect_url", ftaExternal.wxpayRedirectUrl);
 
         redirectUrl.search = params.toString();
@@ -268,21 +294,26 @@ router.post("/:tier/:cycle",
         return;
       }
 
+      /**
+       * Wechat pay inside its embedded browser.
+       */
       const state = await wxOAuthClient.generateState();
       ctx.session.state = state;
-      ctx.session.product = {
-        tier,
-        cycle,
-      };
+      // ctx.session.product = {
+      //   tier,
+      //   cycle,
+      // };
 
       // After OAuth redirect, which product user
-      // selected will not be known unless we save
+      // selected will be unknown unless we save
       // it somewhere.
-      ctx.session.subs = {
-        tier,
-        cycle,
-        payMethod: "wechat",
-      }
+      // ctx.session.subs = {
+      //   tier,
+      //   cycle,
+      //   payMethod: "wechat",
+      // }
+      // Amid OAuth jumping back and forth the information on which product user selected will be lost. Save such data in session.
+      ctx.session.plan = plan;
 
       // Go through the wechat OAuth workflow to
       // to obtain user's open id.
