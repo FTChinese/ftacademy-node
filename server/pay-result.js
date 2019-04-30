@@ -11,6 +11,9 @@ const {
 const {
   ClientError,
 } = require("../lib/response");
+const {
+  isDev,
+} = require("../lib/config");
 
 const router = new Router();
 
@@ -22,7 +25,24 @@ router.get("/ali/done",
   checkSession(),
 
   async(ctx) => {
-    debug("Alipay finished: %O", ctx.request.query);
+    /**
+     * @type {{charset: string, out_trade_no: string, method: string, total_amount: string, sign: string, trade_no: string, auth_app_id: string, version; string, app_id: string, sign_type: string, seller_id: string, timestamp: string}}
+     * @example {
+charset: 'utf-8',
+out_trade_no: 'FTB32D1833FECF93D1',
+method: 'alipay.trade.page.pay.return',
+total_amount: '0.01',
+sign: 'ko39MMITcx8nNevyfBsKoDN/Sizr5GdVqIM+pzH26VkJ6I3/QBVlviLIjWsRat96HBAVjb/L4E38EIdiUJI10Ii9CH9g//Inm665DIMH2VRveEF3orV51MJ90TnrgkuO1l4nVbt6fQ9fInwW3QYjlTG78yV/Hs5yICN/SzUg92Oj1Vi46Ow4UT/I750sGUIqcKq363QpfU9ZlJGB0Ay+DfnOepqdD5F+F8SBXbbxsAfyXLivQRLyl9f7SD473eSV0WKcsbk3cTBijPgqgSPGQ98rNg0b6j1sBiiOpMb3YwwZmJROjPwN3JkmiMWRdKBD2lRljVIiDoK+BiBiNPkvXQ==',
+trade_no: 'xxxxxxx',
+auth_app_id: 'xxxxxxxx',
+version: '1.0',
+app_id: 'xxxxxx',
+sign_type: 'RSA2',
+seller_id: 'xxxxxxx',
+timestamp: '2019-04-30 10:11:07' }
+     */
+    const query = ctx.request.query;
+    debug("Alipay finished: %O", query);
 
     /**
      * @type {ISubsOrder}
@@ -45,16 +65,26 @@ router.get("/ali/done",
     const acntData = await account.fetch();
 
     ctx.state.user = new Account(acntData);
+
+    ctx.state.subs = subsOrder;
+    ctx.state.result = {
+      totalAmount: query.total_amount,
+      transactionId: query.trade_no,
+      ftcOrderId: query.out_trade_no,
+      paidAt: query.timestamp,
+    };
+
     ctx.state.redirectTo = fromUrl
       ? `${fromUrl}?subscribed=true`
       : nextUser.subs;
 
-    ctx.state.subs = subsOrder;
-
     ctx.body = await render("alipay-done.html", ctx.state);
 
-    delete ctx.session.subs;
-    delete ctx.session.from;
+    // For development, keep session to test ui.
+    if (!isDev) {
+      delete ctx.session.subs;
+      delete ctx.session.from;
+    }
   }
 );
 
@@ -123,8 +153,10 @@ router.get("/wx/done",
 
     ctx.body = await render("wxpay-done.html", ctx.state);
 
-    delete ctx.session.subs;
-    delete ctx.session.from;
+    if (!isDev) {
+      delete ctx.session.subs;
+      delete ctx.session.from;
+    }
   }
 );
 
