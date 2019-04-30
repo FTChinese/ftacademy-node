@@ -89,6 +89,33 @@ timestamp: '2019-04-30 10:11:07' }
 );
 
 /**
+ * @description This is used as wechat pay's `return_url` for mobile browser pay.
+ * GET /pay/wx/mobile
+ */
+router.get("/wx/mobile",
+  checkSession(),
+
+  async(ctx) => {
+    /**
+     * @type {ISubsOrder}
+     */
+    const subsOrder = ctx.session.subs;
+
+    debug("Wx mobile browser pay order: %O", subsOrder);
+
+    if (!subsOrder) {
+      ctx.status = 404;
+      return;
+    }
+
+    // Date to render UI.
+    ctx.state.plan = subsOrder;
+
+    ctx.body = await render("wx-mobile.html", ctx.state);
+  }
+);
+
+/**
  * @description The redirect_url of wechat for mobile browser only.
  * Desktop payment could redirect user here.
  * GET /pay/done/wx
