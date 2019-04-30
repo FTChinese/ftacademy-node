@@ -97,12 +97,6 @@ router.get("/wx/done",
   checkSession(),
 
   async(ctx, next) => {
-    /**
-     * @type {ISubsOrder}
-     */
-    const subsOrder = ctx.session.subs;
-
-    debug("Subs order from session: %O", subsOrder);
 
     // If users jumped to this site from somewhere else, like in the middle of reading an article,
     // redirec them back after payment finished.
@@ -115,14 +109,39 @@ router.get("/wx/done",
       : nextUser.subs;
 
     /**
+     * @type {ISubsOrder}
+     */
+    const subsOrder = ctx.session.subs;
+    debug("Subs order from session: %O", subsOrder);
+
+    ctx.state.subs = subsOrder;
+
+    // To test UI.
+    // ctx.state.result = {
+    //   "paymentState": "SUCCESS",
+    //   "paymentStateDesc": "支付成功",
+    //   "totalFee": 1,
+    //   "transactionId": "4200000252201903069440709666",
+    //   "ftcOrderId": "FT1D3CEDDB2599EFB9",
+    //   "paidAt": "2019-03-06T07:21:18Z"
+    // };
+
+    // return await next();
+
+    if (!subsOrder || !subsOrder.appId) {
+      return await next();
+    }
+
+    /**
      * @type {Account}
      */
     const account = ctx.state.user;
 
     try {
-      if (subsOrder) {
-        const payResult = await account.wxOrderQuery(subsOrder);
+      const payResult = await account.wxOrderQuery(subsOrder);
+      debug("Wxpay query result: %O", payResult);
 
+      if (payResult === "SUCCESS") {
         ctx.state.result = payResult;
       }
     } catch (e) {
@@ -133,6 +152,7 @@ router.get("/wx/done",
       }
 
       switch (e.status) {
+        // In case the order does not exist.
         case 404:
           break;
 
@@ -142,15 +162,9 @@ router.get("/wx/done",
       }
     }
 
-    // ctx.state.result = {
-    //   "paymentState": "SUCCESS",
-    //   "paymentStateDesc": "支付成功",
-    //   "totalFee": 1,
-    //   "transactionId": "4200000252201903069440709666",
-    //   "ftcOrderId": "FT1D3CEDDB2599EFB9",
-    //   "paidAt": "2019-03-06T07:21:18Z"
-    // };
-
+    await next();
+  },
+  async (ctx, next) => {
     ctx.body = await render("wxpay-done.html", ctx.state);
 
     if (!isDev) {
