@@ -22,6 +22,8 @@ router.get("/ali/done",
   checkSession(),
 
   async(ctx) => {
+    debug("Alipay finished: %O", ctx.request.query);
+
     /**
      * @type {ISubsOrder}
      */
@@ -30,7 +32,7 @@ router.get("/ali/done",
     debug("Sub order from session: %O", subsOrder);
 
     /**
-     * @type {string}
+     * @type {string} - redirect user back to where they come from.
      */
     const fromUrl = ctx.session.from;
     debug("From url: %s", fromUrl);
