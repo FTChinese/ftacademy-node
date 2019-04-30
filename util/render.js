@@ -37,6 +37,15 @@ env.addFilter("localize", function(key) {
   return key;
 });
 
+env.addFilter("toCST", function(str) {
+  try {
+    return DateTime.fromISO(str).setZone("Asia/Shanghai").toFormat("yyyy年LL月dd日 HH:mm:ss")
+  } catch (e) {
+    debug(e);
+    return str
+  }
+});
+
 env.addFilter("formatWxPrice", function(price) {
   if (typeof price !== "number") {
     return price;
