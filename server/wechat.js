@@ -1,8 +1,4 @@
 const debug = require("debug")("fta:wx-oauth");
-const {
-  URL,
-  URLSearchParams,
-} = require("url");
 const Router = require("koa-router");
 const render = require("../util/render");
 const {
@@ -13,8 +9,8 @@ const {
   isAPIError,
 } = require("../lib/response");
 const {
-  nextUser
-} = require("../lib/sitemap");
+  Viper,
+} = require("../lib/config");
 const {
   clientApp,
   checkSession,
@@ -35,9 +31,11 @@ router.get("/oauth2/callback",
     /**
      * This part is only used to test UI.
      */
-    // ctx.state.subs = {
-    //   tier: "standard",
-    //   cycle: "month",
+    // ctx.state.plan = {
+    //   "tier": "standard",
+    //   "cycle": "month",
+    //   "listPrice": 28,
+    //   "netPrice": 28,
     // };
 
     // ctx.state.order = {
@@ -52,7 +50,16 @@ router.get("/oauth2/callback",
     //     "signType": "MD5"
     // };
 
-    // ctx.body = await render("wxoauth-callback.html", ctx.state);
+    // ctx.session.subs = {
+    //   "tier": "standard",
+    //   "cycle": "month",
+    //   "listPrice": 28,
+    //   "netPrice": 28,
+    //   "orderId": "FTF2B16619766893C1",
+    //   "appId": Viper.getInstance().getWxAppForJSAPI().app_id,
+    // }
+
+    // ctx.body = await render("wx-embedded.html", ctx.state);
     // return;
 
     /**
@@ -104,11 +111,12 @@ router.get("/oauth2/callback",
     }
 
     /**
-     * @type {ISubsOrder}
+     * @description Find out which product user selected.
+     * @type {IPlan}
      */
-    const subs = ctx.session.subs;
+    const plan = ctx.session.plan;
 
-    if (!subs) {
+    if (!plan) {
       ctx.status = 404;
       ctx.body = "Unknow product";
       ctx.state.invalid = {
@@ -131,24 +139,35 @@ router.get("/oauth2/callback",
       const order = await account
         .setClient(ctx.state.clientApp)
         .wxBrowserOrder({
-          tier: subs.tier,
-          cycle: subs.cycle,
+          tier: plan.tier,
+          cycle: plan.cycle,
           openId: token.openid,
         });
 
       debug("Order for wx browser: %O", order);
 
-      subs.orderId = order.ftcOrderId;
-      subs.listPrice = order.listPrice;
-      subs.netPrice = order.netPrice;
-      subs.appId = order.appId;
+      /**
+       * @type {ISubsOrder}
+       */
+      const subsOrder = {
+        tier: plan.tier,
+        cycle: plan.cycle,
+        listPrice: order.listPrice,
+        netPrice: order.netPrice,
+        orderId: order.ftcOrderId,
+        appId: order.appId,
+        payMethod: "wechat",
+      };
 
-      ctx.state.subs = subs;
+      ctx.state.plan = plan;
       ctx.state.order = order;
 
-      ctx.body = await render("wxoauth-callback.html", ctx.state);
+      ctx.session.subs = subsOrder;
+
+      ctx.body = await render("wx-embedded.html", ctx.state);
 
       delete ctx.session.state;
+      delete ctx.session.plan;
 
     } catch (e) {
       debug("%O", e);
