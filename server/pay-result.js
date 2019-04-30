@@ -141,7 +141,7 @@ router.get("/wx/done",
       const payResult = await account.wxOrderQuery(subsOrder);
       debug("Wxpay query result: %O", payResult);
 
-      if (payResult === "SUCCESS") {
+      if (payResult.paymentState === "SUCCESS") {
         ctx.state.result = payResult;
       }
     } catch (e) {
