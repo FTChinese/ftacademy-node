@@ -1,0 +1,67 @@
+{% extends "layout/product.html" %}
+
+{% block title %}会员订阅{% endblock %}
+
+{# For wechat embeded browser prior to pay #}
+
+{% block content %}
+
+  <div id="paySuccess" class="pay-result text-center">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="#26747a" d="M760 380.4l-61.6-61.6-263.2 263.1-109.6-109.5L264 534l171.2 171.2L760 380.4z"/></svg>
+
+    <a class="btn btn-primary btn-block" href="{{ sitemap.wxpayDone }}">支付成功</a>
+  </div>
+
+  <div id="payFailure" class="pay-result">
+    <div class="d-flex justify-content-center align-items-center">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><path fill="#990F3D" d="M697.4 759.2l61.8-61.8L573.8 512l185.4-185.4-61.8-61.8L512 450.2 326.6 264.8l-61.8 61.8L450.2 512 264.8 697.4l61.8 61.8L512 573.8z"/></svg>
+
+      <span class="failure-text">支付失败，<a href="{{ sitemap.home }}">请返回重试</a></span>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block embedJs %}
+<script>
+
+function onBridgeReady() {
+  WeixinJSBridge.invoke("getBrandWCPayRequest", {
+    "appId": "{{ order.appId }}",
+    "timeStamp": "{{ order.timestamp }}",
+    "nonceStr": "{{ order.nonce }}",
+    "package": "{{ order.pkg }}",
+    "signType": "{{ order.signType }}",
+    "paySign": "{{ order.signature }}",
+  }, function(res) {
+
+    if (res.err_msg == "get_brand_wcpay_request:ok") {
+      const paySuccess = document.getElementById("paySuccess");
+      if (paySuccess) {
+        paySuccess.classList.add("show");
+      }
+    } else {
+      const payFailure = document.getElementById("payFailure");
+      if (payFailure) {
+        payFailure.classList.add("show");
+      }
+    }
+  });
+}
+
+function initWxBrowserPay() {
+  if (typeof WeixinJSBridge == "undefined") {
+    if (document.addEventListener) {
+      document.addEventListener("WeixinJSBridgeReady", onBridgeReady, false);
+    } else if (document.attachEvent) {
+      document.attachEvent("WeixinJSBridgeReady", onBridgeReady);
+      document.attachEvent("onWeixinJSBridgeReady", onBridgeReady);
+    }
+  } else {
+    onBridgeReady();
+  }
+}
+
+initWxBrowserPay();
+</script>
+{% endblock %}

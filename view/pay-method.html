@@ -1,0 +1,48 @@
+{% extends "layout/product.html" %}
+
+{% block title %}会员订阅{% endblock %}
+
+{% block content %}
+
+  <div class="card mt-5">
+    <div class="card-header">请选择支付方式</div>
+    <div class="card-body">
+      <form action="" method="post" id="payForm">
+
+        <div class="form-check mb-3">
+          <input class="form-check-input"
+            type="radio"
+            name="payMethod"
+            id="alipay"
+            value="alipay"
+            required>
+          <label class="form-check-label d-block" for="alipay">
+            <img src="http://www.ftacademy.cn/images/alipay-68x24.png" alt="支付宝">
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input"
+            type="radio"
+            name="payMethod"
+            id="wechat"
+            value="wechat">
+          <label class="form-check-label d-block" for="wechat">
+            <img src="http://www.ftacademy.cn/images/wxpay-113x24.png" alt="微信支付">
+          </label>
+        </div>
+
+        {% if errors.payMethod %}
+          <div class="form-errortext">{{errors.payMethod}}</div>
+        {% endif %}
+
+        <div class="mt-5">
+          <button
+            type="submit"
+            class="btn btn-primary btn-block"
+            data-disable-with="创建订单...">确认</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+{% endblock %}
