@@ -1,3 +1,8 @@
+## TODO
+
+* Cache promotion plans.
+* Build to flat binary.
+
 ## Sitemap
 
 * `GET /` Home page
