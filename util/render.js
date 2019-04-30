@@ -3,6 +3,7 @@ const debug = require("debug")("fta:render");
 const nunjucks = require("nunjucks");
 const util = require("util");
 const numeral = require("numeral");
+const { DateTime } = require("luxon");
 const localized = {
   "year": "年",
   "month": "月",
@@ -45,18 +46,6 @@ env.addFilter("toCST", function(str) {
 
   try {
     return DateTime.fromISO(str).setZone("Asia/Shanghai").toFormat("yyyy年LL月dd日 HH:mm:ss")
-  } catch (e) {
-    debug(e);
-    return str
-  }
-});
-
-env.addFilter("toSQLTime", function(str) {
-  if (!str) {
-    return "";
-  }
-  try {
-    return DateTime.fromISO(str).setZone("Asia/Shanghai").toSQLTime();
   } catch (e) {
     debug(e);
     return str
