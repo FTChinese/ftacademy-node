@@ -1,0 +1,13 @@
+{% extends "layout/product.html" %}
+
+{% block title %}会员订阅{% endblock %}
+
+{# Wechat pay in mobile browser. This is used for independent browsers only, not wechat's embeded browser. #}
+
+{% block content %}
+
+<div class="mt-5">
+  <a class="btn btn-primary btn-block" href="{{ sitemap.wxpayDone }}">支付完成？</a>
+</div>
+
+{% endblock %}
