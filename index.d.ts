@@ -125,6 +125,7 @@ declare interface IWxAccess {
   scope: string;
 }
 
+// Saved in session so that we can tell user what they buy after being redirected from payment providers.
 declare interface ISubsOrder {
   orderId: string;
   tier: string;
@@ -177,4 +178,11 @@ declare interface IAliWebPay {
   listPrice: string;
   netPrice: string;
   payUrl: string;
+}
+
+declare interface IAliPayResult {
+  totalAmount: string;
+  transactionId: string;
+  ftcOrderId: string;
+  paidAt: string;
 }
