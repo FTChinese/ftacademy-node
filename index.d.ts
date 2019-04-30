@@ -5,6 +5,21 @@ declare interface IBanner {
   content: string[];
 }
 
+declare interface IPlan {
+  tier: "standard" | "premium";
+  cycle: "month" | "year";
+  listPrice: number;
+  netPrice: number;
+  description?: string;
+}
+
+// Saved in session so that we can tell user what they buy after being redirected from payment providers.
+declare interface ISubsOrder extends IPlan {
+  orderId: string;
+  appId?: string; // wx app id.
+  payMethod: "alipay" | "wechat";
+}
+
 declare interface IProduct {
   heading: string;
   benefits: string[];
@@ -12,14 +27,6 @@ declare interface IProduct {
   tier: "standard" | "premium";
   currency: string;
   pricing: IPlan[];
-}
-
-declare interface IPlan {
-  tier: "standard" | "premium";
-  cycle: "month" | "year";
-  listPrice: number;
-  netPrice: number;
-  description: string;
 }
 
 declare interface IPricing {
@@ -123,17 +130,6 @@ declare interface IWxAccess {
   refresh_token: string;
   openid: string;
   scope: string;
-}
-
-// Saved in session so that we can tell user what they buy after being redirected from payment providers.
-declare interface ISubsOrder {
-  orderId: string;
-  tier: string;
-  cycle: string;
-  listPrice: number;
-  netPrice: number;
-  appId?: string; // wx app id.
-  payMethod: "alipay" | "wechat";
 }
 
 declare interface IWxQRPay {
