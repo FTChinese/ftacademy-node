@@ -160,6 +160,7 @@ router.post("/:tier/:cycle",
            * @todo Handle redirect after payment.
            */
           if (isMobile) {
+            // User will be redirect to /pay/ali/done after paid.
             const aliOrder = await account.aliMobileOrder(tier, cycle);
 
             ctx.session.subs = {
@@ -194,7 +195,7 @@ router.post("/:tier/:cycle",
           break;
 
         default:
-          ctx.state = 404;
+          ctx.status = 404;
           return;
       }
     } catch (e) {
