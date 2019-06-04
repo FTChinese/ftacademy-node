@@ -22,5 +22,8 @@ inline : js css
 deploy :
 	pm2 deploy ecosystem.config.js sandbox
 
+pkg :
+	pkg --out-path=build -d index.js
+
 clean :
 	rm -rf build/*
