@@ -22,6 +22,9 @@ inline : js css
 deploy :
 	pm2 deploy ecosystem.config.js sandbox
 
+linux:
+	pkg --targets node12-linux-x64 package.json
+
 pkg :
 	pkg --out-path=build -d index.js
 
