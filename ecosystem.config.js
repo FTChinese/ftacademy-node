@@ -44,7 +44,7 @@ module.exports = {
   deploy: {
     "production": {
       user: "node",
-      host: "nodeserver",
+      host: "node11",
       ref: "origin/master",
       repo: "https://github.com/FTChinese/ftacademy-node.git",
       path: "/home/node/next/ftacademy",
@@ -54,7 +54,7 @@ module.exports = {
     },
     "v2": {
       user: "node",
-      host: "nodeserver",
+      host: "node11",
       ref: "origin/master",
       repo: "https://github.com/FTChinese/ftacademy-node.git",
       path: "/home/node/next/ftacademy",
@@ -64,7 +64,7 @@ module.exports = {
     },
     "sandbox": {
       user: "node",
-      host: "nodeserver",
+      host: "node11",
       ref: "origin/master",
       repo: "https://github.com/FTChinese/ftacademy-node.git",
       path: "/home/node/next/ftacademy",
