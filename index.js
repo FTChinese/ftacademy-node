@@ -25,6 +25,7 @@ const logout = require("./server/logout");
 const wechat = require("./server/wechat");
 const version = require("./server/version");
 const ua = require("./server/ua");
+const android = require("./server/android");
 
 const app = new Koa();
 
@@ -55,6 +56,7 @@ router.use("/subscription", subscription);
 router.use("/pay", payResult);
 router.use("/wx", wechat);
 router.use("/ua", ua);
+router.use("/android", android);
 router.use("/__version", version);
 
 app.use(router.routes());

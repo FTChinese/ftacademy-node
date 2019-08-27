@@ -1,6 +1,8 @@
 const path = require("path");
 const debug = require("debug")("fta:render");
 const nunjucks = require("nunjucks");
+const markdown = require('nunjucks-markdown');
+const marked = require('marked');
 const util = require("util");
 const numeral = require("numeral");
 const { DateTime } = require("luxon");
@@ -59,5 +61,12 @@ env.addFilter("formatWxPrice", function(price) {
 
   return price / 100;
 });
+
+marked.setOptions({
+  gfm: true,
+  breaks: true,
+});
+
+markdown.register(env, marked);
 
 module.exports = util.promisify(nunjucks.render);

@@ -26,7 +26,9 @@
     <div class="container justify-content-between">
       <a class="navbar-brand" href="http://www.ftchinese.com" target="__blank">FT中文网</a>
 
+      {% block subBrand%}
       <a class="navbar-text mr-auto" href="{{ sitemap.home }}">会员订阅</a>
+      {% endblock %}
 
       {% if user %}
         <div class="dropdown">
