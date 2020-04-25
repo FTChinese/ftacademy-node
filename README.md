@@ -1,3 +1,5 @@
+# Deprcated. Will be replced by a Golang mono app.
+
 ## TODO
 
 * Cache promotion plans.
